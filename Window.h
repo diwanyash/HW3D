@@ -1,9 +1,21 @@
 #pragma once
 #include "DeadWin.h"
-
+#include "DeadException.h"
 
 class Window{
 private:
+	class Exception : public Deadexceptiom
+	{
+	public:
+		Exception(int line,const char* file,HRESULT hr)noexcept;
+		const char* what() const noexcept override;
+		virtual const char* GetType() const noexcept override;
+		static std::string TranslateErrorCode(HRESULT hr) noexcept;
+		HRESULT GetErrorCode()const noexcept;
+		std::string GetErrorString()const noexcept;
+	private:
+		HRESULT hr;
+	};
 	class WindowClass{
 	public:
 		static const char* GetName() noexcept;

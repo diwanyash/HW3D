@@ -7,7 +7,7 @@ int CALLBACK WinMain(
 	int			nCmdShow
 	)
 {
-	Window Wnd = { 640,480,"DEEPFUCK" };
+	Window Wnd = { 640,480,"happy window" };
 	// Message Process
 	MSG msg;
 	BOOL gResult;

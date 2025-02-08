@@ -1,14 +1,14 @@
 #include "DeadException.h"
 #include <sstream>
 
-Deadexceptiom::Deadexceptiom(int line, const char* file) noexcept
+Deadexception::Deadexception(int line, const char* file) noexcept
 	:
-	line(GetLine()),
-	file(GetFile())
+	line(line),
+	file(file)
 {
 }
 
-const char* Deadexceptiom::what() const noexcept
+const char* Deadexception::what() const noexcept
 {
 	std::ostringstream oss;
 	oss << GetType() << std::endl
@@ -17,22 +17,22 @@ const char* Deadexceptiom::what() const noexcept
 	return whatBuffer.c_str();
 }
 
-const char* Deadexceptiom::GetType() const noexcept
+const char* Deadexception::GetType() const noexcept
 {
 	return "Dead Exception";
 }
 
-int Deadexceptiom::GetLine() const noexcept
+int Deadexception::GetLine() const noexcept
 {
 	return line;
 }
 
-const std::string& Deadexceptiom::GetFile() const noexcept
+const std::string& Deadexception::GetFile() const noexcept
 {
 	return file;
 }
 
-std::string Deadexceptiom::GetOriginString() const noexcept
+std::string Deadexception::GetOriginString() const noexcept
 {
 	std::ostringstream oss;
 	oss << "[File] " << file << std::endl

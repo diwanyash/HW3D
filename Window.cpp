@@ -3,6 +3,8 @@
 
 Window::WindowClass Window::WindowClass::wndClass;
 
+
+
 Window::WindowClass::WindowClass() noexcept
 	:
 	hInstance( GetModuleHandle( nullptr ) )
@@ -38,14 +40,19 @@ HINSTANCE Window::WindowClass::GetInstance() noexcept
 	return wndClass.hInstance;
 }
 
-Window::Window(int width, int height, const char* name) noexcept
+Window::Window(int width, int height, const char* name)
 {
 	RECT wr;
 	wr.left = 100;
 	wr.right = width + wr.left;
 	wr.top = 100;
 	wr.bottom = height + wr.top;
-	AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE);
+	
+	if (FAILED(AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE)))
+	{
+		throw DEWND_LAST_EXCEPT();
+	}
+	
 
 	hWnd = CreateWindow(
 		WindowClass::GetName(),
@@ -58,6 +65,11 @@ Window::Window(int width, int height, const char* name) noexcept
 		WindowClass::GetInstance(),
 		this
 	);
+
+	if (hWnd == nullptr)
+	{
+		throw DEWND_LAST_EXCEPT();
+	}
 
 	ShowWindow(hWnd, SW_SHOWDEFAULT);
 }
@@ -107,9 +119,10 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 
 Window::Exception::Exception(int line, const char* file, HRESULT hr) noexcept
 	:
-	Deadexceptiom(line,file),
+	Deadexception(line, file),
 	hr(hr)
-{}
+{
+}
 
 const char* Window::Exception::what() const noexcept
 {
@@ -133,8 +146,8 @@ std::string Window::Exception::TranslateErrorCode(HRESULT hr) noexcept
 	DWORD nMsgLen = FormatMessage(
 		FORMAT_MESSAGE_ALLOCATE_BUFFER |
 		FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-		nullptr,hr,MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		reinterpret_cast<LPSTR>(&pMsgBuf),0,nullptr
+		nullptr, hr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		reinterpret_cast<LPSTR>(&pMsgBuf), 0, nullptr
 	);
 	if (nMsgLen == 0)
 	{
@@ -155,5 +168,4 @@ std::string Window::Exception::GetErrorString() const noexcept
 	return TranslateErrorCode(hr);
 }
 
-#define DEWND_EXCEPT(hr) Windlow::Exception(__LINE__,__FILE__,hr);
 

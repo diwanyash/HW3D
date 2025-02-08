@@ -2,10 +2,10 @@
 #include <exception>
 #include <string>
 
-class Deadexceptiom : public std::exception
+class Deadexception : public std::exception
 {
 public:
-	Deadexceptiom(int line, const char* file) noexcept;
+	Deadexception(int line, const char* file) noexcept;
 	const char* what() const noexcept override;
 	virtual const char* GetType() const noexcept;
 	int GetLine() const noexcept;

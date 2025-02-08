@@ -12,18 +12,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		case WM_KEYDOWN:
 			if (wParam == 'D')
 			{
-				SetWindowText(hWnd, L"Respect!");
+				SetWindowText(hWnd, "Respect!");
 			}
 			break;
 		case WM_KEYUP:
 			if (wParam == 'F')
 			{
-				SetWindowText(hWnd, L"NO Respect!");
+				SetWindowText(hWnd, "NO Respect!");
 			}
 			break;
 		case WM_CHAR:
 		{
-			static std::wstring title;
+			static std::string title;
 			title.push_back((char)wParam);
 			SetWindowText(hWnd, title.c_str());
 		}
@@ -32,7 +32,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		{
 			const POINTS pt = MAKEPOINTS(lParam);
 			//use wstringstream instead of ostringstream !!!!!!!!
-			std::wstringstream oss;
+			std::stringstream oss;
 			oss << "(" << pt.x << "," << pt.y << ")";
 			SetWindowText(hWnd, oss.str().c_str());
 		}
@@ -48,7 +48,7 @@ int CALLBACK WinMain(
 	int			nCmdShow
 	)
 {
-	const auto ClassName = L"HW3D";
+	const auto ClassName = "HW3D";
 
 	// Register a class
 	WNDCLASSEX wc = { 0 };
@@ -71,7 +71,7 @@ int CALLBACK WinMain(
 	HWND hWnd = CreateWindowEx(
 		0,
 		ClassName,
-		L"Happy Window",
+		"Happy Window",
 		WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
 		200,200,
 		640,480,

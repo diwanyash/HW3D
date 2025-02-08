@@ -153,8 +153,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeadWin.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="WindowsMessageMap.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="HW3D.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

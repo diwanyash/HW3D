@@ -1,6 +1,10 @@
 #include "Window.h"
 
+Window::WindowClass Window::WindowClass::wndClass;
+
 Window::WindowClass::WindowClass() noexcept
+	:
+	hInstance( GetModuleHandle( nullptr ) )
 {
 	WNDCLASSEX wc = { 0 };
 	wc.cbSize = sizeof(wc);
@@ -42,8 +46,7 @@ Window::Window(int width, int height, const char* name) noexcept
 	wr.bottom = height + wr.top;
 	AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE);
 
-	hWnd = CreateWindowEx(
-		0,
+	hWnd = CreateWindow(
 		WindowClass::GetName(),
 		name,
 		WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
@@ -63,7 +66,7 @@ Window::~Window()
 	DestroyWindow(hWnd);
 }
 
-LRESULT Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
+LRESULT CALLBACK Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
 	if (msg == WM_NCCREATE)
 	{
@@ -82,11 +85,11 @@ LRESULT Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-LRESULT Window::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
+LRESULT CALLBACK Window::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
 	Window* const pWnd = reinterpret_cast<Window*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 	// call handleMsg
-	pWnd->HandleMsg(hWnd, msg, wParam, lParam);
+	return pWnd->HandleMsg(hWnd, msg, wParam, lParam);
 }
 
 LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept

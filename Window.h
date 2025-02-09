@@ -2,6 +2,7 @@
 #include "DeadWin.h"
 #include "DeadException.h"
 #include "KeyBoard.h"
+#include "Mouse.h"
 
 class Window{
 public:
@@ -36,12 +37,14 @@ public:
 	~Window();
 	Window(const Window&) = delete;
 	Window& operator=(const Window&) = delete;
+	void SetTitle(const std::string& title);
 private:
 	static LRESULT CALLBACK HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 	static LRESULT CALLBACK HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 	LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 public:
 	KeyBoard kbd;
+	Mouse mouse;
 private:
 	int width;
 	int height;

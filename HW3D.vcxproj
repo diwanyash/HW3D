@@ -149,6 +149,7 @@
   <ItemGroup>
     <ClCompile Include="DeadException.cpp" />
     <ClCompile Include="KeyBoard.cpp" />
+    <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="WindowsMessageMap.cpp" />
     <ClCompile Include="WinMain.cpp" />
@@ -157,6 +158,7 @@
     <ClInclude Include="DeadException.h" />
     <ClInclude Include="DeadWin.h" />
     <ClInclude Include="KeyBoard.h" />
+    <ClInclude Include="Mouse.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="WindowsMessageMap.h" />

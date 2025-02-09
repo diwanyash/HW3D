@@ -122,12 +122,12 @@ void Mouse::OnWheelDelta(int x, int y, int delta) noexcept
     // ver WHEEL_DELTA is 120
     while (WheelDeltaCarry >= WHEEL_DELTA)
     {
-        WheelDeltaCarry -= delta;
+        WheelDeltaCarry -= WHEEL_DELTA;
         OnWheelUp(x, y);
     }
     while (WheelDeltaCarry <= -WHEEL_DELTA)
     {
-        WheelDeltaCarry += delta;
+        WheelDeltaCarry += WHEEL_DELTA;
         OnWheelDown(x, y);
     }
 }

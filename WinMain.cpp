@@ -20,29 +20,6 @@ int CALLBACK WinMain(
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
-			while (!wnd.mouse.IsEmpty())
-			{
-				const auto e = wnd.mouse.Read();
-				switch (e.GetType())
-				{
-					case Mouse::Event::Type::WheelUp:
-					{
-						wheel++;
-						std::ostringstream oss;
-						oss << wheel;
-						wnd.SetTitle(oss.str());
-					}
-					break;
-					case Mouse::Event::Type::WheelDown:
-					{
-						wheel--;
-						std::ostringstream oss;
-						oss << wheel;
-						wnd.SetTitle(oss.str());
-					}
-					break;
-				}
-			}
 		}
 		if (gResult == -1)
 		{

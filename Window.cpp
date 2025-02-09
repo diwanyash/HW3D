@@ -144,10 +144,10 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 		case WM_CHAR:
 			kbd.OnChar(static_cast<unsigned char>(wParam));
 			break;
-			/**************** Keypress Messages End ****************/
+			/**************** Keypress Messages End ******************/
 
 
-			/**************** Mouse Event Start ****************/
+			/**************** Mouse Event Start **********************/
 		case WM_MOUSEMOVE:
 		{
 			const POINTS pt = MAKEPOINTS(lParam);
@@ -205,7 +205,7 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 			mouse.OnWheelDelta(pt.x, pt.y, delta);
 		}
 			break;
-		/**************** Mouse Event End ****************/
+		/****************** Mouse Event End *******************/
 	}
 
 	return DefWindowProc(hWnd, msg, wParam, lParam);

@@ -92,6 +92,7 @@ LRESULT CALLBACK Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 
 		SetWindowLongPtr(hWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&Window::HandleMsgThunk));
 
+
 		return pWnd->HandleMsg(hWnd, msg, wParam, lParam);
 	}
 
@@ -112,6 +113,27 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 	case WM_CLOSE:
 		PostQuitMessage(0);
 		return 0;
+		/* Keypress Messages Start */
+	case WM_KILLFOCUS:
+		kbd.ClearState();
+		break;
+		// check for system key
+	case WM_SYSKEYDOWN:
+	case WM_KEYDOWN:
+		if( !(lParam & 0x40000000) || kbd.AutoReapeatIsEnabled() )
+		{
+			kbd.OnKeyPressed(static_cast<unsigned char>(wParam));
+		}
+		break;
+		// check for system key
+	case WM_SYSKEYUP:
+	case WM_KEYUP:
+		kbd.OnKeyReleased(static_cast<unsigned char>(wParam));
+		break;
+	case WM_CHAR:
+		kbd.OnChar(static_cast<unsigned char>(wParam));
+		break;
+		/* Keypress Messages End */
 	}
 
 	return DefWindowProc(hWnd, msg, wParam, lParam);

@@ -10,7 +10,7 @@ int CALLBACK WinMain(
 {
 	try
 	{
-		Window Wnd = { 640,480,"happy window" };
+		Window wnd = { 640,480,"happy window" };
 		// Message Process
 		MSG msg;
 		BOOL gResult;
@@ -18,6 +18,11 @@ int CALLBACK WinMain(
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
+
+			if (wnd.kbd.KeyIsPressed(VK_MENU))
+			{
+				MessageBox(nullptr, "you jumpped!!!!!", "keypress", MB_OK | MB_ICONEXCLAMATION);
+			}
 		}
 
 		if (gResult == -1)

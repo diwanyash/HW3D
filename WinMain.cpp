@@ -1,6 +1,7 @@
 #include "Window.h"
 #include "DeadException.h"
 #include "sstream"
+#include "App.h"
 
 int CALLBACK WinMain(
 	HINSTANCE	hInstance,
@@ -11,22 +12,10 @@ int CALLBACK WinMain(
 {
 	try
 	{
-		Window wnd = { 640,480,"happy window" };
-		// Message Process
-		MSG msg;
-		BOOL gResult;
-		int wheel = 0;
-		while ((gResult = GetMessage(&msg, nullptr, 0, 0)) > 0)
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-		if (gResult == -1)
-		{
-			return -1;
-		}
 
-		return msg.wParam;
+		/************* Window ****************/
+		return App{}.Go();
+
 	}
 	catch (const Deadexception& e)
 	{

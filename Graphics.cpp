@@ -1,6 +1,10 @@
 #include "Graphics.h"
 #include "dxerr.h"
+#include <wrl.h>
 #include <sstream>
+
+// namespaces
+namespace wrl = Microsoft::WRL;
 
 #pragma comment(lib,"d3d11.lib")
 
@@ -32,7 +36,7 @@ Graphics::Graphics(HWND hwnd)
 	sd.SampleDesc.Quality = 0;
 	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	sd.BufferCount = 1;
-	sd.OutputWindow = (HWND)696969;
+	sd.OutputWindow = hwnd;
 	sd.Windowed = TRUE;
 	sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 	sd.Flags = 0;
@@ -60,34 +64,10 @@ Graphics::Graphics(HWND hwnd)
 		&pContext
 	));
 
-	ID3D11Resource* pBackBuffer = nullptr;
-	GFX_THROW_INFO(pSwap->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(&pBackBuffer)));
-	GFX_THROW_INFO(pDevice->CreateRenderTargetView(pBackBuffer, nullptr, &pTarget));
+	wrl::ComPtr<ID3D11Resource> pBackBuffer;
+	GFX_THROW_INFO(pSwap->GetBuffer(0, __uuidof(ID3D11Resource), &pBackBuffer));
+	GFX_THROW_INFO(pDevice->CreateRenderTargetView(pBackBuffer.Get(), nullptr, &pTarget));
 
-	pSwap->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(&pBackBuffer));
-	pDevice->CreateRenderTargetView(pBackBuffer, nullptr, &pTarget);
-
-	pBackBuffer->Release();
-}
-
-Graphics::~Graphics()
-{
-	if (pTarget != nullptr)
-	{
-		pTarget->Release();
-	}
-	if (pContext != nullptr)
-	{
-		pContext->Release();
-	}
-	if (pSwap != nullptr)
-	{
-		pSwap->Release();
-	}
-	if (pDevice != nullptr)
-	{
-		pDevice->Release();
-	}
 }
 
 void Graphics::EndFrame()

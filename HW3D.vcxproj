@@ -149,6 +149,7 @@
   <ItemGroup>
     <ClCompile Include="App.cpp" />
     <ClCompile Include="DeadException.cpp" />
+    <ClCompile Include="dxerr.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="KeyBoard.cpp" />
     <ClCompile Include="Mouse.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="App.h" />
     <ClInclude Include="DeadException.h" />
     <ClInclude Include="DeadWin.h" />
+    <ClInclude Include="dxerr.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="KeyBoard.h" />
     <ClInclude Include="Mouse.h" />
@@ -169,6 +171,11 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="HW3D.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="DXGetErrorDescription.inl" />
+    <None Include="DXGetErrorString.inl" />
+    <None Include="DXTrace.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

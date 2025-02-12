@@ -55,7 +55,7 @@ public:
 		const float color[] = {red,green,blue,1.0f};
 		pContext->ClearRenderTargetView(pTarget.Get(), color);
 	}
-	void DrawTestTriangle();
+	void DrawTestTriangle(int i_vp);
 private:
 #ifndef NDEBUG
 	DxgiInfoManager infoManager;

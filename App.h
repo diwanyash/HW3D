@@ -10,4 +10,5 @@ private:
 	void DoFrame();
 private:
 	Window wnd;
+	int input = 0;
 };

@@ -93,7 +93,7 @@ void Graphics::EndFrame()
 	}
 }
 
-void Graphics::DrawTestTriangle()
+void Graphics::DrawTestTriangle(int i_vp)
 {
 	namespace wrl = Microsoft::WRL;
 	HRESULT hr;
@@ -151,9 +151,9 @@ void Graphics::DrawTestTriangle()
 	{
 		{"Position",0,DXGI_FORMAT_R32G32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
 	};
-
 	GFX_THROW_INFO(pDevice->CreateInputLayout(ied, (UINT)std::size(ied),pBlob->GetBufferPointer(),
 		pBlob->GetBufferSize(),&pInputLayout));
+
 
 	// bind (vertex) layout
 	pContext->IASetInputLayout(pInputLayout.Get());
@@ -167,14 +167,42 @@ void Graphics::DrawTestTriangle()
 	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	// Set viewport
-	D3D11_VIEWPORT vp = {};
-	vp.Width = 800;
-	vp.Height = 600;
-	vp.MinDepth = 0;
-	vp.MaxDepth = 1;
-	vp.TopLeftX = 0;
-	vp.TopLeftY = 0;
-	pContext->RSSetViewports(1u, &vp);
+	D3D11_VIEWPORT vp[4];
+
+	// ViewPort0
+	vp[0].Width = 400;
+	vp[0].Height = 300;
+	vp[0].MinDepth = 0;
+	vp[0].MaxDepth = 1;
+	vp[0].TopLeftX = 0;
+	vp[0].TopLeftY = 0;
+
+	// ViewPort1
+	vp[1].Width = 400;
+	vp[1].Height = 300;
+	vp[1].MinDepth = 0;
+	vp[1].MaxDepth = 1;
+	vp[1].TopLeftX = 400;
+	vp[1].TopLeftY = 0;
+
+	// ViewPort2
+	vp[2].Width = 400;
+	vp[2].Height = 300;
+	vp[2].MinDepth = 0;
+	vp[2].MaxDepth = 1;
+	vp[2].TopLeftX = 0;
+	vp[2].TopLeftY = 300;
+
+	// ViewPort3
+	vp[3].Width = 400;
+	vp[3].Height = 300;
+	vp[3].MinDepth = 0;
+	vp[3].MaxDepth = 1;
+	vp[3].TopLeftX = 400;
+	vp[3].TopLeftY = 300;
+
+
+	pContext->RSSetViewports(1u, &vp[i_vp]);
 
 
 

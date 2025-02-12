@@ -21,6 +21,27 @@ int App::Go()
 void App::DoFrame()
 {
 	wnd.Gfx().ClearBuffer(0.3f, 1.0f, 0.7f);
-	wnd.Gfx().DrawTestTriangle();
+	if (wnd.kbd.KeyIsPressed('Q'))
+	{
+		input = 0;
+	}
+	else if (wnd.kbd.KeyIsPressed('W'))
+	{
+		input = 1;
+	}
+	else if (wnd.kbd.KeyIsPressed('A'))
+	{
+		input = 2;
+	}
+	else if (wnd.kbd.KeyIsPressed('S'))
+	{
+		input = 3;
+	}
+	else
+	{
+		input = 0;
+	}
+
+	wnd.Gfx().DrawTestTriangle(input);
 	wnd.Gfx().EndFrame();
 }

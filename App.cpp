@@ -37,10 +37,6 @@ void App::DoFrame()
 	{
 		input = 3;
 	}
-	else
-	{
-		input = 0;
-	}
 
 	wnd.Gfx().DrawTestTriangle(input);
 	wnd.Gfx().EndFrame();

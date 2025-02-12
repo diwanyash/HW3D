@@ -99,16 +99,26 @@ void Graphics::DrawTestTriangle(int i_vp)
 	HRESULT hr;
 
 	struct Vertex {
-		float x;
-		float y;
+		//struct Pos
+		//{
+			float x;
+			float y;
+		//};
+		//struct Color
+		//{
+			unsigned char r;
+			unsigned char g;
+			unsigned char b;
+			unsigned char a;
+		//};
 	};
 
 	// create vertex buffer
 	const Vertex vertices[] =
 	{
-		{0.0f,0.5f},
-		{0.5f,-0.5f},
-		{-0.5f,-0.5f}
+		{0.0f,0.5f,255,0,0,0},
+		{0.5f,-0.5f,0,255,0,0},
+		{-0.5f,-0.5f,0,0,255,0}
 	};
 
 	wrl::ComPtr<ID3D11Buffer> pVertexBuffer;
@@ -150,7 +160,9 @@ void Graphics::DrawTestTriangle(int i_vp)
 	const D3D11_INPUT_ELEMENT_DESC ied[] =
 	{
 		{"Position",0,DXGI_FORMAT_R32G32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
+		{"Color",0,DXGI_FORMAT_R8G8B8A8_UNORM,0,8u,D3D11_INPUT_PER_VERTEX_DATA,0},
 	};
+
 	GFX_THROW_INFO(pDevice->CreateInputLayout(ied, (UINT)std::size(ied),pBlob->GetBufferPointer(),
 		pBlob->GetBufferSize(),&pInputLayout));
 
@@ -170,8 +182,8 @@ void Graphics::DrawTestTriangle(int i_vp)
 	D3D11_VIEWPORT vp[4];
 
 	// ViewPort0
-	vp[0].Width = 400;
-	vp[0].Height = 300;
+	vp[0].Width = 800;
+	vp[0].Height = 600;
 	vp[0].MinDepth = 0;
 	vp[0].MaxDepth = 1;
 	vp[0].TopLeftX = 0;

@@ -116,9 +116,13 @@ void Graphics::DrawTestTriangle(int i_vp)
 	// create vertex buffer
 	const Vertex vertices[] =
 	{
-		{0.0f,0.5f,255,0,0,0},
-		{0.5f,-0.5f,0,255,0,0},
-		{-0.5f,-0.5f,0,0,255,0}
+		// main
+		{0.0f,0.5f,255,0,0,0},//0
+		{0.5f,0.25f,255,255,0,0},//1
+		{0.5f,-0.5f,0,255,0,0},//2
+		{0.0f,-0.75f,0,255,255,0},//3
+		{-0.5f,-0.5f,0,0,255,0},//4
+		{-0.5f,0.25f,255,0,255,0}//5
 	};
 
 	wrl::ComPtr<ID3D11Buffer> pVertexBuffer;
@@ -138,6 +142,31 @@ void Graphics::DrawTestTriangle(int i_vp)
 	const UINT poffset = 0u;
 	pContext->IASetVertexBuffers(0u,1u,pVertexBuffer.GetAddressOf(), &pstride, &poffset);
 	
+	//// create index buffer
+	const unsigned short indices[] =
+	{
+		0,2,4,
+		0,1,2,
+		2,3,4,
+		4,5,0
+	};
+
+	wrl::ComPtr<ID3D11Buffer> pIndexBuffer;
+	D3D11_BUFFER_DESC bid = {};
+	bid.Usage = D3D11_USAGE_DEFAULT;
+	bid.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	bid.CPUAccessFlags = 0u;
+	bid.MiscFlags = 0u;
+	bid.ByteWidth = sizeof(indices);
+	bid.StructureByteStride = sizeof(unsigned short);
+	D3D11_SUBRESOURCE_DATA sid = {};
+	sid.pSysMem = indices;
+	GFX_THROW_INFO(pDevice->CreateBuffer(&bid, &sid, &pIndexBuffer));
+
+
+	// bind index buffer
+	pContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT,0u);
+
 	// create pixel shader
 	wrl::ComPtr<ID3D11PixelShader> pPixelShader;
 	wrl::ComPtr<ID3DBlob> pBlob;
@@ -219,7 +248,7 @@ void Graphics::DrawTestTriangle(int i_vp)
 
 
 	// Draw
-	GFX_THROW_INFO_ONLY(pContext->Draw((UINT)std::size(vertices), 0u));
+	GFX_THROW_INFO_ONLY(pContext->DrawIndexed((UINT)std::size(indices),0u, 0u));
 }
 
 // Graphics exception stuff

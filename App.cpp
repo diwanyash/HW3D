@@ -38,6 +38,6 @@ void App::DoFrame()
 		input = 3;
 	}
 
-	wnd.Gfx().DrawTestTriangle(input);
+	wnd.Gfx().DrawTestTriangle(input, ft.Peek());
 	wnd.Gfx().EndFrame();
 }

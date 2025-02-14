@@ -51,6 +51,9 @@
     <ClCompile Include="DxgiInfoManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FrameTimer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">
@@ -84,6 +87,9 @@
       <Filter>Dxerr</Filter>
     </ClInclude>
     <ClInclude Include="DxgiInfoManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameTimer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

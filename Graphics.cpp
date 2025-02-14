@@ -2,10 +2,12 @@
 #include "dxerr.h"
 #include "d3dcompiler.h"
 #include <wrl.h>
+#include "DirectXMath.h"
 #include <sstream>
 
 // namespaces
 namespace wrl = Microsoft::WRL;
+namespace dx = DirectX;
 
 #pragma comment(lib,"d3d11.lib")
 #pragma comment(lib,"D3DCompiler.lib")
@@ -93,7 +95,7 @@ void Graphics::EndFrame()
 	}
 }
 
-void Graphics::DrawTestTriangle(int i_vp, float angle)
+void Graphics::DrawTestTriangle(int i_vp, float angle, float x, float y)
 {
 	namespace wrl = Microsoft::WRL;
 	HRESULT hr;
@@ -120,7 +122,7 @@ void Graphics::DrawTestTriangle(int i_vp, float angle)
 		{0.0f,0.5f,255,0,0,0},//0
 		{0.5f,0.25f,255,255,0,0},//1
 		{0.5f,-0.5f,0,255,0,0},//2
-		{0.0f,-0.75f,0,255,255,0},//3
+		{0.0f,-1.0f,0,255,255,0},//3 // chnaged
 		{-0.5f,-0.5f,0,0,255,0},//4
 		{-0.5f,0.25f,255,0,255,0}//5
 	};
@@ -170,22 +172,16 @@ void Graphics::DrawTestTriangle(int i_vp, float angle)
 	// create constant buffer ( vertex shader )
 	struct ConstatntBuffer
 	{
-		struct
-		{
-		
-			float element[4][4];
-		
-		}transformation;
+		dx::XMMATRIX transform;
 	};
 
 	const ConstatntBuffer cb
 	{
-		{
-			 (3.0f / 4.0f) * std::cos(angle) , std::sin(angle),  0.0f,  0.0f,
-			(3.0f / 4.0f) * -std::sin(angle) , std::cos(angle),  0.0f,  0.0f,
-			     0.0f,               0.0f,       1.0f,  0.0f,
-			     0.0f,               0.0f,       0.0f,  1.0f,
-		}
+		dx::XMMatrixTranspose(
+			dx::XMMatrixRotationZ(angle)*
+			dx::XMMatrixScaling(3.0f / 4.0f, 1.0f, 1.0f)*
+			dx::XMMatrixTranslation( x, -y, 1.0f )
+		)
 	};
 
 	wrl::ComPtr<ID3D11Buffer> pConstantBuffer;

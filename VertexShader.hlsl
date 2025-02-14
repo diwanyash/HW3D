@@ -6,7 +6,7 @@ struct Vout
 
 cbuffer Cbuff
 {
-    row_major matrix transform;
+    matrix transform;
 };
 
 Vout main( float2 pos : Position, float4 color : Color )

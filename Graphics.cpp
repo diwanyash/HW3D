@@ -95,6 +95,18 @@ Graphics::Graphics(HWND hwnd)
 
 	// bind render target to OM
 	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(),pDSV.Get());
+
+	// bind ViewPort
+	D3D11_VIEWPORT vp;
+	vp.Width = 800;
+	vp.Height = 600;
+	vp.MinDepth = 0;
+	vp.MaxDepth = 1;
+	vp.TopLeftX = 0;
+	vp.TopLeftY = 0;
+
+	pContext->RSSetViewports(1u, &vp);
+
 }
 
 void Graphics::EndFrame()
@@ -114,6 +126,21 @@ void Graphics::EndFrame()
 			throw GFX_EXCEPT(hr);
 		}
 	}
+}
+
+void Graphics::DrawIndexed(UINT count) noexcept(!IS_DEBUG)
+{
+	GFX_THROW_INFO_ONLY(pContext->DrawIndexed(count, 0u, 0u));
+}
+
+void Graphics::SetProjection(DirectX::FXMMATRIX proj) noexcept
+{
+	Projection = proj;
+}
+
+DirectX::XMMATRIX Graphics::GetProjection() const noexcept
+{
+	return Projection;
 }
 
 void Graphics::DrawTestTriangle(int i_vp, float angle, float x, float y, float z)

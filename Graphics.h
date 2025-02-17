@@ -5,8 +5,11 @@
 #include <vector>
 #include "wrl.h"
 #include "DxgiInfoManager.h"
+#include "d3dcompiler.h"
+#include <DirectXMath.h>
 
 class Graphics {
+	friend class Bindable;
 public:
 	class Exception : public Deadexception
 	{
@@ -56,8 +59,12 @@ public:
 		pContext->ClearRenderTargetView(pTarget.Get(), color);
 		pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 	}
+	void DrawIndexed( UINT count ) noexcept(!IS_DEBUG);
+	void SetProjection( DirectX::FXMMATRIX proj )noexcept;
+	DirectX::XMMATRIX GetProjection() const noexcept;
 	void DrawTestTriangle(int i_vp, float angle, float x, float y, float z);
 private:
+	DirectX::XMMATRIX Projection;
 #ifndef NDEBUG
 	DxgiInfoManager infoManager;
 #endif

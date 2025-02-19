@@ -56,6 +56,9 @@ public:
 		pContext->ClearRenderTargetView(pTarget.Get(), color);
 	}
 	void DrawTestTriangle();
+public:
+	static constexpr int WIDTH = 800;
+	static constexpr int HEIGHT = 600;
 private:
 #ifndef NDEBUG
 	DxgiInfoManager infoManager;
@@ -64,4 +67,8 @@ private:
 	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTarget;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> pTextureBuffer;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pShaderResourceView;
+	Microsoft::WRL::ComPtr<ID3D11PixelShader> pPixelShader; 
+	Microsoft::WRL::ComPtr<ID3D11VertexShader> pVertexShader; 
 };

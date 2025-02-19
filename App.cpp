@@ -1,8 +1,6 @@
 #include "App.h"
 
 App::App()
-	:
-	wnd( 800, 600, "happy window" )
 {}
 
 int App::Go()

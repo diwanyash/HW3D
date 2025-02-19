@@ -68,10 +68,117 @@ Graphics::Graphics(HWND hwnd)
 		&pContext
 	));
 
+	// handle to backbuffer
 	wrl::ComPtr<ID3D11Resource> pBackBuffer;
 	GFX_THROW_INFO(pSwap->GetBuffer(0, __uuidof(ID3D11Resource), &pBackBuffer));
 	GFX_THROW_INFO(pDevice->CreateRenderTargetView(pBackBuffer.Get(), nullptr, &pTarget));
 
+	// Set render creation
+	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), nullptr);
+
+	// create VP
+	D3D11_VIEWPORT vp;
+	vp.TopLeftX = 0.0f;
+	vp.TopLeftY = 0.0f;
+	vp.Width = WIDTH;
+	vp.Height = HEIGHT;
+	vp.MinDepth = 0.0f;
+	vp.MaxDepth = 1.0f;
+
+
+	// bind viewport
+	pContext->RSSetViewports(1u, &vp);
+
+
+	// create Texture2D
+	D3D11_TEXTURE2D_DESC Tex2Desc;
+	Tex2Desc.Width = WIDTH;
+	Tex2Desc.Height = HEIGHT;
+	Tex2Desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+	Tex2Desc.Usage = D3D11_USAGE_DYNAMIC;
+	Tex2Desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	Tex2Desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	Tex2Desc.SampleDesc.Count = 1;
+	Tex2Desc.SampleDesc.Quality = 0;
+	Tex2Desc.MipLevels = 1;
+	Tex2Desc.ArraySize = 1;
+	Tex2Desc.MiscFlags = 0;
+
+	GFX_THROW_INFO(pDevice->CreateTexture2D(&Tex2Desc,nullptr, &pTextureBuffer ));
+
+
+	// create shader resource view
+	D3D11_SHADER_RESOURCE_VIEW_DESC SrvDesc = {};
+	SrvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	SrvDesc.Format = Tex2Desc.Format;
+	SrvDesc.Texture2D.MipLevels = 1;
+	//create srv
+	GFX_THROW_INFO(pDevice->CreateShaderResourceView(pTextureBuffer.Get(), &SrvDesc, &pShaderResourceView));
+
+	//create pixel shader
+	wrl::ComPtr<ID3DBlob> pBlob;
+	GFX_THROW_INFO(D3DReadFileToBlob(L"PixelShader.cso", &pBlob));
+	GFX_THROW_INFO(pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader));
+
+
+	//create vertex shader
+	GFX_THROW_INFO(D3DReadFileToBlob(L"VertexShader.cso", &pBlob));
+	GFX_THROW_INFO(pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pVertexShader));
+
+
+	// create VertexBuffer
+	struct Vertex {
+		float x;
+		float y;
+		float y;
+		float u;
+		float v;
+	};
+	const Vertex vertices[] =
+	{
+		{ -1.0f,1.0f,0.5f,0.0f,0.0f },
+		{ 1.0f,1.0f,0.5f,1.0f,0.0f },
+		{ 1.0f,-1.0f,0.5f,1.0f,1.0f },
+		{ -1.0f,1.0f,0.5f,0.0f,0.0f },
+		{ 1.0f,-1.0f,0.5f,1.0f,1.0f },
+		{ -1.0f,-1.0f,0.5f,0.0f,1.0f },
+	};
+
+
+	wrl::ComPtr<ID3D11Buffer> pVertexBuffer;
+	D3D11_BUFFER_DESC bd = {};
+	bd.Usage = D3D11_USAGE_DEFAULT;
+	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bd.CPUAccessFlags = 0u;
+	bd.MiscFlags = 0u;
+	bd.ByteWidth = sizeof(vertices);
+	bd.StructureByteStride = sizeof(Vertex);
+	D3D11_SUBRESOURCE_DATA vbsd = {};
+	vbsd.pSysMem = vertices;
+	GFX_THROW_INFO(pDevice->CreateBuffer(&bd, &vbsd, &pVertexBuffer));
+
+	// create InputLayout
+	const D3D11_INPUT_ELEMENT_DESC ied[] =
+	{
+		{ "POS",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
+		{ "TEXCOORDS",0,DXGI_FORMAT_R32G32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0 }
+	};
+
+	wrl::ComPtr<ID3D11InputLayout> pInputLayout;
+	GFX_THROW_INFO(pDevice->CreateInputLayout(ied,2u,pBlob->GetBufferPointer(),pBlob->GetBufferSize(),&pInputLayout));
+	
+	// sample desc
+	D3D11_SAMPLER_DESC sampDesc = {};
+	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+	sampDesc.MinLOD = 0;
+	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+
+	
 }
 
 void Graphics::EndFrame()

@@ -9,5 +9,6 @@ public:
 private:
 	void DoFrame();
 private:
-	Window wnd;
+	Window wnd = Window(Graphics::WIDTH, Graphics::HEIGHT, "AAA GAME!!!");
+	Graphics& gfx = wnd.Gfx();
 };

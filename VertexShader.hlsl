@@ -1,4 +1,15 @@
-float4 main( float2 pos : Position ) : SV_POSITION
+struct VOut
 {
-    return float4(pos.x,pos.y,0.0f,1.0f);
+    float4 Pos : SV_POSITION;
+    float2 texCoords : TEXCOORDS;
+};
+
+VOut main(float4 Pos : POS, float2 texCoords : TEXCOORDS)
+{
+    VOut output;
+
+    output.Pos = Pos;
+    output.texCoords = texCoords;
+
+    return output;
 }

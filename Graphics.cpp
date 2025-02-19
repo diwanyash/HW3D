@@ -3,6 +3,7 @@
 #include "d3dcompiler.h"
 #include <wrl.h>
 #include <sstream>
+#include <cassert>
 
 // namespaces
 namespace wrl = Microsoft::WRL;
@@ -127,13 +128,6 @@ Graphics::Graphics(HWND hwnd)
 
 
 	// create VertexBuffer
-	struct Vertex {
-		float x;
-		float y;
-		float y;
-		float u;
-		float v;
-	};
 	const Vertex vertices[] =
 	{
 		{ -1.0f,1.0f,0.5f,0.0f,0.0f },
@@ -145,7 +139,6 @@ Graphics::Graphics(HWND hwnd)
 	};
 
 
-	wrl::ComPtr<ID3D11Buffer> pVertexBuffer;
 	D3D11_BUFFER_DESC bd = {};
 	bd.Usage = D3D11_USAGE_DEFAULT;
 	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -156,6 +149,10 @@ Graphics::Graphics(HWND hwnd)
 	D3D11_SUBRESOURCE_DATA vbsd = {};
 	vbsd.pSysMem = vertices;
 	GFX_THROW_INFO(pDevice->CreateBuffer(&bd, &vbsd, &pVertexBuffer));
+
+	// buffer init
+	pBufferS = reinterpret_cast<Color*>(
+		_aligned_malloc(sizeof(Color) * WIDTH * HEIGHT, 16u));
 
 	// create InputLayout
 	const D3D11_INPUT_ELEMENT_DESC ied[] =
@@ -177,8 +174,23 @@ Graphics::Graphics(HWND hwnd)
 	sampDesc.MinLOD = 0;
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
+	pDevice->CreateSamplerState(&sampDesc, &pSamplerState);
 
 	
+}
+
+Graphics::~Graphics()
+{
+	if (pBufferS)
+	{
+		_aligned_free(pBufferS);
+		pBufferS = nullptr;
+	}
+
+	if (pContext)
+	{
+		pContext->ClearState();
+	}
 }
 
 void Graphics::EndFrame()
@@ -187,6 +199,37 @@ void Graphics::EndFrame()
 #ifndef NDEBUG
 	infoManager.Set();
 #endif
+
+
+	GFX_THROW_INFO(pContext->Map(pTextureBuffer.Get(), 0u, D3D11_MAP_WRITE_DISCARD, 0u, &MappedTextureBuffer));
+
+	// copying
+	Color* pDst = reinterpret_cast<Color*>(MappedTextureBuffer.pData);
+	const size_t dPitch = MappedTextureBuffer.RowPitch / sizeof(Color);
+	const size_t sPitch = WIDTH;
+	const size_t RowBytes = sPitch * sizeof(Color);
+
+	for (size_t y = 0u; y < HEIGHT; y++)
+	{
+		memcpy(&pDst[y * dPitch], &pBufferS[y * sPitch], RowBytes);
+	}
+
+	// unmap
+	pContext->Unmap(pTextureBuffer.Get(), 0u);
+
+	// render
+	pContext->IASetInputLayout(pInputLayout.Get());
+	pContext->VSSetShader(pVertexShader.Get(), nullptr, 0u);
+	pContext->PSSetShader(pPixelShader.Get(), nullptr, 0u);
+	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	UINT stride = sizeof(Vertex);
+	UINT offset = 0u;
+	pContext->IASetVertexBuffers(0u, 1u, pVertexBuffer.GetAddressOf(), &stride, &offset);
+	pContext->PSSetShaderResources(0u, 1u, pShaderResourceView.GetAddressOf());
+	pContext->PSSetSamplers(0u, 1u, pSamplerState.GetAddressOf());
+	pContext->Draw(6u, 0u);
+
+	// flip
 	if (FAILED(hr = pSwap->Present(1u, 0u)))
 	{
 		if (hr == DXGI_ERROR_DEVICE_REMOVED)
@@ -198,6 +241,15 @@ void Graphics::EndFrame()
 			throw GFX_EXCEPT(hr);
 		}
 	}
+}
+
+void Graphics::SetPixel(int x, int y, Color c)
+{
+	assert(x >= 0);
+	assert(x < int(WIDTH));
+	assert(y >= 0);
+	assert(y < int(HEIGHT));
+	pBufferS[WIDTH * y + x] = c;
 }
 
 void Graphics::DrawTestTriangle()
@@ -256,7 +308,7 @@ void Graphics::DrawTestTriangle()
 	wrl::ComPtr<ID3D11InputLayout> pInputLayout;
 	const D3D11_INPUT_ELEMENT_DESC ied[] =
 	{
-		{"Position",0,DXGI_FORMAT_R32G32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
+		{"Pos",0,DXGI_FORMAT_R32G32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
 	};
 
 	GFX_THROW_INFO(pDevice->CreateInputLayout(ied, (UINT)std::size(ied),pBlob->GetBufferPointer(),

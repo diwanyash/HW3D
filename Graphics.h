@@ -5,6 +5,7 @@
 #include <vector>
 #include "wrl.h"
 #include "DxgiInfoManager.h"
+#include "Color.h"
 
 class Graphics {
 public:
@@ -48,27 +49,40 @@ public:
 	Graphics( HWND hwnd );
 	Graphics(const Graphics&) = delete;
 	Graphics& operator=(const Graphics&) = delete;
-	~Graphics() = default;
+	~Graphics();
 	void EndFrame();
-	void ClearBuffer(float red, float green, float blue) noexcept
+	void ClearBuffer() noexcept
 	{
-		const float color[] = {red,green,blue,1.0f};
-		pContext->ClearRenderTargetView(pTarget.Get(), color);
+		memset(pBufferS, 0u, sizeof(Color) * HEIGHT * WIDTH);
 	}
+	void SetPixel(int x, int y, Color c);
 	void DrawTestTriangle();
 public:
 	static constexpr int WIDTH = 800;
 	static constexpr int HEIGHT = 600;
-private:
+private:	
+	struct Vertex {
+				float x;
+				float y;
+				float z;
+				float u;
+				float v;
+			 };
 #ifndef NDEBUG
 	DxgiInfoManager infoManager;
 #endif
+	D3D11_MAPPED_SUBRESOURCE MappedTextureBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
 	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTarget;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTarget; 
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> pSamplerState;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> pTextureBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer > pVertexBuffer;
+	Microsoft::WRL::ComPtr<ID3D11VertexShader> pVertexShader; 
+	Microsoft::WRL::ComPtr<ID3D11InputLayout> pInputLayout;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pShaderResourceView;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> pPixelShader; 
-	Microsoft::WRL::ComPtr<ID3D11VertexShader> pVertexShader; 
+private:
+	Color* pBufferS = nullptr;
 };

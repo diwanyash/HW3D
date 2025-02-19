@@ -18,7 +18,10 @@ int App::Go()
 
 void App::DoFrame()
 {
-	wnd.Gfx().ClearBuffer(0.3f, 1.0f, 0.7f);
-	wnd.Gfx().DrawTestTriangle();
+	wnd.Gfx().ClearBuffer();
+	//wnd.Gfx().DrawTestTriangle();
+	wnd.Gfx().SetPixel(100, 100, Colors::Red);
+	wnd.Gfx().SetPixel(101, 100, Colors::Blue);
+	wnd.Gfx().SetPixel(102, 100, Colors::Red);
 	wnd.Gfx().EndFrame();
 }

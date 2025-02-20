@@ -24,6 +24,7 @@ int App::Go()
 	{
 		if ( const auto ecode = Window::ProcessMessage() )
 		{
+
 			return *ecode;
 		}
 		DoFrame();

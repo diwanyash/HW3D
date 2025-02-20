@@ -21,30 +21,7 @@ int App::Go()
 
 void App::Logic()
 {
-	if (wnd.kbd.KeyIsPressed(VK_LEFT))
-	{
-		posx--;
-	}
-	if (wnd.kbd.KeyIsPressed(VK_RIGHT))
-	{
-		posx++;
-	}
-	if (wnd.kbd.KeyIsPressed(VK_UP))
-	{
-		posy--;
-	}
-	if (wnd.kbd.KeyIsPressed(VK_DOWN))
-	{
-		posy++;
-	}
 }
 void App::DrawFrame()
 {
-	for (int i = 10; i < 110;i++)
-	{
-		for (int j = 10;j < 110;j++)
-		{
-			gfx.SetPixel(posx + j,posy + i, Colors::Pink);
-		}
-	}
 }

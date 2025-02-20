@@ -16,8 +16,7 @@ private:
 	USER DATA BEGIN
 	*/////////////////////////
 private:
-	int posx = 0;
-	int posy = 0;
+
 	/*/////////////////////////
 	USER DATA END
 	*/////////////////////////

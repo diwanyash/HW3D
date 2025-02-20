@@ -56,7 +56,6 @@ public:
 		memset(pBufferS, 0u, sizeof(Color) * HEIGHT * WIDTH);
 	}
 	void SetPixel(int x, int y, Color c);
-	void DrawTestTriangle();
 public:
 	static constexpr int WIDTH = 800;
 	static constexpr int HEIGHT = 600;
@@ -70,7 +69,12 @@ private:
 			 };
 #ifndef NDEBUG
 	DxgiInfoManager infoManager;
-#endif
+#endif	
+	const D3D11_INPUT_ELEMENT_DESC ied[2] =
+	{
+		{ "POS", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD",0,	DXGI_FORMAT_R32G32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0 }
+	};
 	D3D11_MAPPED_SUBRESOURCE MappedTextureBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
 	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap;

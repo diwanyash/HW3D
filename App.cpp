@@ -1,4 +1,5 @@
 #include "App.h"
+#define gfx wnd.Gfx()
 
 App::App()
 {}
@@ -11,17 +12,39 @@ int App::Go()
 		{
 			return *ecode;
 		}
-		DoFrame();
-
+		gfx.ClearBuffer();
+		Logic();
+		DrawFrame();
+		gfx.EndFrame();
 	}
 }
 
-void App::DoFrame()
+void App::Logic()
 {
-	wnd.Gfx().ClearBuffer();
-	//wnd.Gfx().DrawTestTriangle();
-	wnd.Gfx().SetPixel(100, 100, Colors::Red);
-	wnd.Gfx().SetPixel(101, 100, Colors::Blue);
-	wnd.Gfx().SetPixel(102, 100, Colors::Red);
-	wnd.Gfx().EndFrame();
+	if (wnd.kbd.KeyIsPressed(VK_LEFT))
+	{
+		posx--;
+	}
+	if (wnd.kbd.KeyIsPressed(VK_RIGHT))
+	{
+		posx++;
+	}
+	if (wnd.kbd.KeyIsPressed(VK_UP))
+	{
+		posy--;
+	}
+	if (wnd.kbd.KeyIsPressed(VK_DOWN))
+	{
+		posy++;
+	}
+}
+void App::DrawFrame()
+{
+	for (int i = 10; i < 110;i++)
+	{
+		for (int j = 10;j < 110;j++)
+		{
+			gfx.SetPixel(posx + j,posy + i, Colors::Pink);
+		}
+	}
 }

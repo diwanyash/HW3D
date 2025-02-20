@@ -30,21 +30,17 @@ namespace wrl = Microsoft::WRL;
 Graphics::Graphics(HWND hwnd)
 {
 	DXGI_SWAP_CHAIN_DESC sd = {};
-	sd.BufferDesc.Width = 0;
-	sd.BufferDesc.Height = 0;
+	sd.BufferDesc.Width = WIDTH;
+	sd.BufferDesc.Height = HEIGHT;
 	sd.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-	sd.BufferDesc.RefreshRate.Numerator = 0;
-	sd.BufferDesc.RefreshRate.Denominator = 0;
-	sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-	sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+	sd.BufferDesc.RefreshRate.Numerator = 1;
+	sd.BufferDesc.RefreshRate.Denominator = 60;
+	sd.BufferCount = 1;
 	sd.SampleDesc.Count = 1;
 	sd.SampleDesc.Quality = 0;
 	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	sd.BufferCount = 1;
 	sd.OutputWindow = hwnd;
 	sd.Windowed = TRUE;
-	sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-	sd.Flags = 0;
 
 	UINT swapCreateFlags = 0u;
 #ifndef NDEBUG
@@ -150,19 +146,15 @@ Graphics::Graphics(HWND hwnd)
 	vbsd.pSysMem = vertices;
 	GFX_THROW_INFO(pDevice->CreateBuffer(&bd, &vbsd, &pVertexBuffer));
 
-	// buffer init
-	pBufferS = reinterpret_cast<Color*>(
-		_aligned_malloc(sizeof(Color) * WIDTH * HEIGHT, 16u));
-
 	// create InputLayout
-	const D3D11_INPUT_ELEMENT_DESC ied[] =
-	{
-		{ "POS",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
-		{ "TEXCOORDS",0,DXGI_FORMAT_R32G32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0 }
-	};
 
+
+	wrl::ComPtr<ID3DBlob> pBlob2;
+	GFX_THROW_INFO(D3DReadFileToBlob(L"VertexShader.cso", &pBlob2));
 	wrl::ComPtr<ID3D11InputLayout> pInputLayout;
-	GFX_THROW_INFO(pDevice->CreateInputLayout(ied,2u,pBlob->GetBufferPointer(),pBlob->GetBufferSize(),&pInputLayout));
+	auto casjc = pBlob2->GetBufferPointer();
+	auto casjfc = pBlob2->GetBufferSize();
+	GFX_THROW_INFO(pDevice->CreateInputLayout(ied,2u,pBlob2->GetBufferPointer(),pBlob2->GetBufferSize(),&pInputLayout));
 	
 	// sample desc
 	D3D11_SAMPLER_DESC sampDesc = {};
@@ -174,8 +166,12 @@ Graphics::Graphics(HWND hwnd)
 	sampDesc.MinLOD = 0;
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
-	pDevice->CreateSamplerState(&sampDesc, &pSamplerState);
+	GFX_THROW_INFO(pDevice->CreateSamplerState(&sampDesc, &pSamplerState));
 
+
+	// buffer init
+	pBufferS = reinterpret_cast<Color*>(
+		_aligned_malloc(sizeof(Color) * WIDTH * HEIGHT, 16u));
 	
 }
 
@@ -199,8 +195,6 @@ void Graphics::EndFrame()
 #ifndef NDEBUG
 	infoManager.Set();
 #endif
-
-
 	GFX_THROW_INFO(pContext->Map(pTextureBuffer.Get(), 0u, D3D11_MAP_WRITE_DISCARD, 0u, &MappedTextureBuffer));
 
 	// copying
@@ -217,8 +211,19 @@ void Graphics::EndFrame()
 	// unmap
 	pContext->Unmap(pTextureBuffer.Get(), 0u);
 
+
+	//////// create InputLayout
+	
+	//extra 
+	wrl::ComPtr<ID3DBlob> pBlob;
+	GFX_THROW_INFO(D3DReadFileToBlob(L"VertexShader.cso", &pBlob));
+	wrl::ComPtr<ID3D11InputLayout> pInputLayout;
+	auto casjc = pBlob->GetBufferPointer();
+	auto casjfc = pBlob->GetBufferSize();
+	GFX_THROW_INFO(pDevice->CreateInputLayout(ied, 2u, pBlob->GetBufferPointer(), pBlob->GetBufferSize(), &pInputLayout));
+
 	// render
-	pContext->IASetInputLayout(pInputLayout.Get());
+	GFX_THROW_INFO_ONLY(pContext->IASetInputLayout(pInputLayout.Get()));
 	pContext->VSSetShader(pVertexShader.Get(), nullptr, 0u);
 	pContext->PSSetShader(pPixelShader.Get(), nullptr, 0u);
 	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -227,7 +232,7 @@ void Graphics::EndFrame()
 	pContext->IASetVertexBuffers(0u, 1u, pVertexBuffer.GetAddressOf(), &stride, &offset);
 	pContext->PSSetShaderResources(0u, 1u, pShaderResourceView.GetAddressOf());
 	pContext->PSSetSamplers(0u, 1u, pSamplerState.GetAddressOf());
-	pContext->Draw(6u, 0u);
+	GFX_THROW_INFO_ONLY(pContext->Draw(6u, 0u));
 
 	// flip
 	if (FAILED(hr = pSwap->Present(1u, 0u)))
@@ -250,95 +255,6 @@ void Graphics::SetPixel(int x, int y, Color c)
 	assert(y >= 0);
 	assert(y < int(HEIGHT));
 	pBufferS[WIDTH * y + x] = c;
-}
-
-void Graphics::DrawTestTriangle()
-{
-	namespace wrl = Microsoft::WRL;
-	HRESULT hr;
-
-	struct Vertex {
-		float x;
-		float y;
-	};
-
-	// create vertex buffer
-	const Vertex vertices[] =
-	{
-		{0.0f,0.5f},
-		{0.5f,-0.5f},
-		{-0.5f,-0.5f}
-	};
-
-	wrl::ComPtr<ID3D11Buffer> pVertexBuffer;
-	D3D11_BUFFER_DESC bd = {};
-	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd.CPUAccessFlags = 0u;
-	bd.MiscFlags = 0u;
-	bd.ByteWidth = sizeof(vertices);
-	bd.StructureByteStride = sizeof(Vertex);
-	D3D11_SUBRESOURCE_DATA sd = {};
-	sd.pSysMem = vertices;
-	GFX_THROW_INFO(pDevice->CreateBuffer(&bd, &sd, &pVertexBuffer));
-
-	// bind vertex buffer
-	const UINT pstride = sizeof(Vertex);
-	const UINT poffset = 0u;
-	pContext->IASetVertexBuffers(0u,1u,pVertexBuffer.GetAddressOf(), &pstride, &poffset);
-	
-	// create pixel shader
-	wrl::ComPtr<ID3D11PixelShader> pPixelShader;
-	wrl::ComPtr<ID3DBlob> pBlob;
-	GFX_THROW_INFO(D3DReadFileToBlob(L"PixelShader.cso", &pBlob));
-	GFX_THROW_INFO(pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader));
-
-	// bind pixel shader
-	pContext->PSSetShader(pPixelShader.Get(), nullptr, 0u);
-
-	// create vertex shader
-	wrl::ComPtr<ID3D11VertexShader> pVertexShader;
-	GFX_THROW_INFO(D3DReadFileToBlob(L"VertexShader.cso",&pBlob));
-	GFX_THROW_INFO(pDevice->CreateVertexShader(pBlob->GetBufferPointer(),pBlob->GetBufferSize(),nullptr, &pVertexShader));
-
-	// bind vertex shader
-	pContext->VSSetShader(pVertexShader.Get(), nullptr, 0u);
-
-	// input (vertex) layout
-	wrl::ComPtr<ID3D11InputLayout> pInputLayout;
-	const D3D11_INPUT_ELEMENT_DESC ied[] =
-	{
-		{"Pos",0,DXGI_FORMAT_R32G32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
-	};
-
-	GFX_THROW_INFO(pDevice->CreateInputLayout(ied, (UINT)std::size(ied),pBlob->GetBufferPointer(),
-		pBlob->GetBufferSize(),&pInputLayout));
-
-	// bind (vertex) layout
-	pContext->IASetInputLayout(pInputLayout.Get());
-
- 
-	// bind render target
-	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), nullptr);
-	
-	
-	// Set Primitive Topology
-	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	// Set viewport
-	D3D11_VIEWPORT vp = {};
-	vp.Width = 800;
-	vp.Height = 600;
-	vp.MinDepth = 0;
-	vp.MaxDepth = 1;
-	vp.TopLeftX = 0;
-	vp.TopLeftY = 0;
-	pContext->RSSetViewports(1u, &vp);
-
-
-
-	// Draw
-	GFX_THROW_INFO_ONLY(pContext->Draw((UINT)std::size(vertices), 0u));
 }
 
 // Graphics exception stuff

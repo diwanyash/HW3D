@@ -28,6 +28,7 @@ int App::Go()
 			return *ecode;
 		}
 		DoFrame();
+
 	}
 }
 

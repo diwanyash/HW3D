@@ -290,7 +290,7 @@ void Graphics::DrawTestTriangle(int i_vp, float angle, float x, float y, float z
 	// create pixel shader
 	wrl::ComPtr<ID3D11PixelShader> pPixelShader;
 	wrl::ComPtr<ID3DBlob> pBlob;
-	GFX_THROW_INFO(D3DReadFileToBlob(L"PixelShader.cso", &pBlob));
+	GFX_THROW_INFO(D3DReadFileToBlob(L"Shaderm\\PixelShader.cso", &pBlob));
 	GFX_THROW_INFO(pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader));
 
 	// bind pixel shader
@@ -298,7 +298,7 @@ void Graphics::DrawTestTriangle(int i_vp, float angle, float x, float y, float z
 
 	// create vertex shader
 	wrl::ComPtr<ID3D11VertexShader> pVertexShader;
-	GFX_THROW_INFO(D3DReadFileToBlob(L"VertexShader.cso",&pBlob));
+	GFX_THROW_INFO(D3DReadFileToBlob(L"Shaderm\\VertexShader.cso",&pBlob));
 	GFX_THROW_INFO(pDevice->CreateVertexShader(pBlob->GetBufferPointer(),pBlob->GetBufferSize(),nullptr, &pVertexShader));
 
 	// bind vertex shader

@@ -1,6 +1,7 @@
 #include "Window.h"
 #include <sstream>
 #include "WindowsThrowMacros.h"
+#include "imgui/backends/imgui_impl_win32.h"
 
 Window::WindowClass Window::WindowClass::wndClass;
 
@@ -77,12 +78,18 @@ Window::Window(int width, int height, const char* name)
 
 	ShowWindow(hWnd, SW_SHOWDEFAULT);
 
+	// imit imgui win32 impl
+	ImGui_ImplWin32_Init( hWnd );
+
 	// point gfx
 	pGfx = std::make_unique<Graphics>(hWnd);
 }
 
 Window::~Window()
 {
+	// destroy imgui
+	ImGui_ImplWin32_Shutdown();
+	
 	DestroyWindow(hWnd);
 }
 
@@ -149,6 +156,12 @@ LRESULT CALLBACK Window::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 
 LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
+	// imgui handle massage
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, msg , wParam, lParam))
+	{
+		return true;
+	}
+
 	switch (msg)
 	{
 		case WM_CLOSE:

@@ -6,6 +6,7 @@
 #include "Graphics.h"
 #include <optional>
 
+
 class Window{
 public:
 	class Exception : public Deadexception

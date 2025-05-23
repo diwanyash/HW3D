@@ -1,6 +1,9 @@
 #include "App.h"
 #include "Box.h"
 #include <memory>
+#include "imgui/imgui.h"
+#include "imgui/backends/imgui_impl_win32.h"
+#include "imgui/backends/imgui_impl_dx11.h" 
 
 App::App()
 	:

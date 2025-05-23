@@ -5,6 +5,7 @@
 #include "DirectXMath.h"
 #include <sstream>
 #include "GraphicsThrowMacros.h"
+#include "imgui/backends/imgui_impl_dx11.h"
 
 // namespaces
 namespace wrl = Microsoft::WRL;
@@ -106,6 +107,8 @@ Graphics::Graphics(HWND hwnd)
 	vp.TopLeftY = 0;
 
 	pContext->RSSetViewports(1u, &vp);
+
+	ImGui_ImplDX11_Init(pDevice.Get(), pContext.Get());
 
 }
 

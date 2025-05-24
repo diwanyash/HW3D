@@ -53,17 +53,16 @@ public:
 	Graphics& operator=(const Graphics&) = delete;
 	~Graphics();
 	void EndFrame();
-	void ClearBuffer(float red, float green, float blue) noexcept
-	{
-		const float color[] = {red,green,blue,1.0f};
-		pContext->ClearRenderTargetView(pTarget.Get(), color);
-		pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
-	}
+	void BeginFrame(float red, float green, float blue) noexcept;
 	void DrawIndexed( UINT count ) noexcept(!IS_DEBUG);
 	void SetProjection( DirectX::FXMMATRIX proj )noexcept;
 	DirectX::XMMATRIX GetProjection() const noexcept;
+	void EnableImgui() noexcept;
+	void DisableImgui() noexcept;
+	bool IsImguiEnabled() const noexcept;
 	void DrawTestTriangle(int i_vp, float angle, float x, float y, float z);
 private:
+	bool ImguiEnabled = true;
 	DirectX::XMMATRIX Projection;
 #ifndef NDEBUG
 	DxgiInfoManager infoManager;

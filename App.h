@@ -15,4 +15,5 @@ private:
 	Window wnd;
 	FrameTimer ft;
 	std::vector <std::unique_ptr<class Box>> boxes;
+	float SpeedFactor = 0.7f;
 };

@@ -2,8 +2,6 @@
 #include "Box.h"
 #include <memory>
 #include "imgui/imgui.h"
-#include "imgui/backends/imgui_impl_win32.h"
-#include "imgui/backends/imgui_impl_dx11.h" 
 
 App::App()
 	:
@@ -41,8 +39,18 @@ App::~App()
 
 void App::DoFrame()
 {
-	float dt = ft.Mark();
-	wnd.Gfx().ClearBuffer(0.0f, 0.0f, 0.0f);
+	float dt = ft.Mark() * SpeedFactor;
+
+
+	if (wnd.kbd.KeyIsPressed(VK_SPACE))
+	{
+		wnd.Gfx().DisableImgui();
+	}
+	else
+	{
+		wnd.Gfx().EnableImgui();
+	}
+	wnd.Gfx().BeginFrame(0.0f, 0.0f, 0.0f);
 
 	for (auto& b : boxes)
 	{
@@ -50,19 +58,15 @@ void App::DoFrame()
 		b->Draw(wnd.Gfx());
 	}
 
-	ImGui_ImplDX11_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
+	static char Buffer[1024];
 
-	static bool Show_Demo_Window = true;
-	if (Show_Demo_Window)
+	if (ImGui::Begin("Simulation of speed"))
 	{
-		ImGui::ShowDemoWindow(&Show_Demo_Window);
+		ImGui::SliderFloat("Speed Factor", &SpeedFactor, 0.0f, 5.0f);
+		ImGui::Text("Appplication Average %.3f ms/frame (%.1f FPS)",1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		ImGui::InputText("Some Text", Buffer, sizeof(Buffer));
 	}
-	ImGui::Render();
-	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-
-
+	ImGui::End();
 
 	wnd.Gfx().EndFrame();
 }

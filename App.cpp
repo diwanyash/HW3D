@@ -49,5 +49,20 @@ void App::DoFrame()
 		b->Update(dt);
 		b->Draw(wnd.Gfx());
 	}
+
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+
+	static bool Show_Demo_Window = true;
+	if (Show_Demo_Window)
+	{
+		ImGui::ShowDemoWindow(&Show_Demo_Window);
+	}
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+
+
 	wnd.Gfx().EndFrame();
 }

@@ -112,6 +112,11 @@ Graphics::Graphics(HWND hwnd)
 
 }
 
+Graphics::~Graphics()
+{
+	ImGui_ImplDX11_Shutdown();
+}
+
 void Graphics::EndFrame()
 {
 	HRESULT hr;

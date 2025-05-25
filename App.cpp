@@ -41,7 +41,7 @@ void App::DoFrame()
 {
 	float dt = ft.Mark() * SpeedFactor;
 
-	wnd.Gfx().BeginFrame(0.0f, 0.0f, 0.0f);
+	wnd.Gfx().BeginFrame(color[0], color[1], color[2]);
 	wnd.Gfx().SetCamera(cam.GetMatrix());
 
 
@@ -65,7 +65,9 @@ void App::DoFrame()
  		ImGui::SliderFloat("Speed Factor", &SpeedFactor, 0.0f, 5.0f);
 		ImGui::Text("Appplication Average %.3f ms/frame (%.1f FPS)",1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::InputText("Some Text", Buffer, sizeof(Buffer));
+		ImGui::ColorPicker3("RGB Picker", color);
 	}
+
 	ImGui::End();
 
 	cam.SpawnControlWindow();

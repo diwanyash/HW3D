@@ -17,7 +17,6 @@ App::App()
 		boxes.push_back(std::make_unique<Box>(wnd.Gfx(), rng, adist, ddist, odist, rdist));
 	}
 	wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 1000.0f));
-	wnd.Gfx().SetCamera(DirectX::XMMatrixTranslation(0.0f, 0.0f, 20.0f));
 }
 
 int App::Go()
@@ -43,6 +42,8 @@ void App::DoFrame()
 	float dt = ft.Mark() * SpeedFactor;
 
 	wnd.Gfx().BeginFrame(0.0f, 0.0f, 0.0f);
+	wnd.Gfx().SetCamera(cam.GetMatrix());
+
 
 	if (wnd.kbd.KeyIsPressed(VK_SPACE))
 	{
@@ -66,6 +67,8 @@ void App::DoFrame()
 		ImGui::InputText("Some Text", Buffer, sizeof(Buffer));
 	}
 	ImGui::End();
+
+	cam.SpawnControlWindow();
 
 	wnd.Gfx().EndFrame();
 }

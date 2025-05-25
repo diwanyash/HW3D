@@ -57,13 +57,16 @@ public:
 	void DrawIndexed( UINT count ) noexcept(!IS_DEBUG);
 	void SetProjection( DirectX::FXMMATRIX proj )noexcept;
 	DirectX::XMMATRIX GetProjection() const noexcept;
+	void SetCamera( DirectX::FXMMATRIX cam) noexcept;
+	DirectX::XMMATRIX GetCamera() const noexcept;
 	void EnableImgui() noexcept;
 	void DisableImgui() noexcept;
 	bool IsImguiEnabled() const noexcept;
 	void DrawTestTriangle(int i_vp, float angle, float x, float y, float z);
 private:
-	bool ImguiEnabled = true;
 	DirectX::XMMATRIX Projection;
+	DirectX::XMMATRIX Camera;
+	bool ImguiEnabled = true;
 #ifndef NDEBUG
 	DxgiInfoManager infoManager;
 #endif

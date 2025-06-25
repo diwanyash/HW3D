@@ -1,5 +1,6 @@
 #include "App.h"
 #include "Box.h"
+#include "Melon.h"
 #include <memory>
 #include "imgui/imgui.h"
 
@@ -13,9 +14,18 @@ App::App()
 	std::uniform_real_distribution<float> odist(0.0f, 3.1415f * 0.3f);
 	std::uniform_real_distribution<float> rdist(6.0f, 20.0f);
 	std::uniform_real_distribution<float> bdist(1.0f, 3.0f);
-	for (int i = 0; i < 170; i++)
+	std::uniform_int_distribution<int> latdiv( 6, 12 );
+	std::uniform_int_distribution<int> longdiv( 12, 24 );
+	std::uniform_int_distribution<int> obj( 10, 50 );
+	for (int i = obj(rng); i > 0; i--)
 	{
-		boxes.push_back(std::make_unique<Box>(wnd.Gfx(), rng, adist, ddist, odist, rdist, bdist));
+		melons.push_back(std::make_unique<Melon>(wnd.Gfx(),
+			rng, adist, ddist, odist, rdist, bdist, longdiv, latdiv));
+	}
+	for (int i = obj(rng); i > 0; i--)
+	{
+		boxes.push_back(std::make_unique<Box>(wnd.Gfx(),
+			rng, adist, ddist, odist, rdist, bdist));
 	}
 	wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 1000.0f));
 }
@@ -55,6 +65,11 @@ void App::DoFrame()
 		wnd.Gfx().EnableImgui();
 	}
 
+	for (auto& b : melons)
+	{
+		b->Update(dt);
+		b->Draw(wnd.Gfx());
+	}	
 	for (auto& b : boxes)
 	{
 		b->Update(dt);
@@ -65,8 +80,8 @@ void App::DoFrame()
 	{
  		ImGui::SliderFloat("Speed Factor", &SpeedFactor, 0.0f, 5.0f);
 		ImGui::Text("Appplication Average %.3f ms/frame (%.1f FPS)",1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		ImGui::Text("Boxes = %d , Melons = %d", (int)boxes.size(), (int)melons.size());
 		ImGui::InputText("Some Text", Buffer, sizeof(Buffer));
-		ImGui::ColorPicker3("RGB Picker", color);
 	}
 
 	ImGui::End();

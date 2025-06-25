@@ -37,12 +37,12 @@ Box::Box(Graphics& gfx, std::mt19937& rng,
 		AddStaticBind(std::make_unique<VertexBuffer>(gfx,model.vertices));
 
 		// bind vertex buffer
-		auto pvs = std::make_unique<VertexShader>(gfx, L"Shaderm\\VertexShader.cso");
+		auto pvs = std::make_unique<VertexShader>(gfx, L"Shaderm\\ColorIndexVS.cso");
 		auto pvsbc = pvs->GetByteCode();
 		AddStaticBind(std::move(pvs));
 
 		// bind pixel shader
-		AddStaticBind(std::make_unique<PixelShader>(gfx, L"Shaderm\\PixelShader.cso"));
+		AddStaticBind(std::make_unique<PixelShader>(gfx, L"Shaderm\\ColorIndexPS.cso"));
 
 		// bind index buffer 
 		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, model.indices));
@@ -69,7 +69,8 @@ Box::Box(Graphics& gfx, std::mt19937& rng,
 				{0.0f,0.0f,1.0f},
 				{1.0f,1.0f,0.0f},
 				{0.75f,0.75f,0.75f},
-				{0.5f,1.0f,0.0f}
+				{0.5f,1.0f,0.0f},
+				{0.1f,0.3f,1.0f}
 			}
 		};
 

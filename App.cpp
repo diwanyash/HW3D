@@ -2,6 +2,7 @@
 #include "Box.h"
 #include "Melon.h"
 #include "Pyramid.h"
+#include "Plane.h"
 #include "Drawable.h"
 #include <memory>
 #include "imgui/imgui.h"
@@ -10,6 +11,12 @@ App::App()
 	:
 	wnd(800, 600, "happy window")
 {
+	struct Vertex{
+		DirectX::XMFLOAT3 pos;
+
+	};
+
+	auto modw = Plane::GetPlain<Vertex>(7,1.0f);
 
 	class Factory
 	{

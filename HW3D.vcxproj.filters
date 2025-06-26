@@ -37,6 +37,9 @@
     <Filter Include="Macros">
       <UniqueIdentifier>{9c0afc94-46a0-492a-86f2-3daec7d5b81f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\GDI">
+      <UniqueIdentifier>{05f99c32-f4e7-4df2-bb1e-96944cc350fc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinMain.cpp">
@@ -134,6 +137,12 @@
     </ClCompile>
     <ClCompile Include="Pyramid.cpp">
       <Filter>Source Files\Drawable</Filter>
+    </ClCompile>
+    <ClCompile Include="Surface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GDIPlusManger.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -271,6 +280,12 @@
     </ClInclude>
     <ClInclude Include="Cone.h">
       <Filter>Header Files\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="Surface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GDIPlusManager.h">
+      <Filter>Header Files\GDI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

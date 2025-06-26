@@ -30,25 +30,26 @@ public:
 			}
 		}
 
-		std::vector<size_t> indices;
+		std::vector<unsigned short> indices;
 		indices.reserve(sq(division) * 6);
 		{
-			const auto vxy2i = [nVerticesSize](size_t x, size_t y)
+			const auto vxy2i = [nVerticesSize](unsigned short x, unsigned short y)
 			{
 				return y * nVerticesSize + x;
 			};
-			for (size_t y = 0; y < division; y++)
+			for (unsigned short y = 0; y < division; y++)
 			{
-				for (size_t x = 0; x < division; x++)
+				for (unsigned short x = 0; x < division; x++)
 				{
-					const std::array<size_t, 4> IndexArray =
-					{ vxy2i(x,y), vxy2i(x + 1,y), vxy2i(x,y + 1), vxy2i(x + 1,y + 1) };
-					indices.push_back(IndexArray[0]);
-					indices.push_back(IndexArray[2]);
-					indices.push_back(IndexArray[1]);
-					indices.push_back(IndexArray[1]);
-					indices.push_back(IndexArray[2]);
-					indices.push_back(IndexArray[3]);
+					const std::array<unsigned short , 4> IndexArray =
+					{ (unsigned short)vxy2i(x,y), (unsigned short)vxy2i(x + 1u,y),
+						(unsigned short)vxy2i(x,y + 1u), (unsigned short)vxy2i(x + 1u,y + 1u) };
+					indices.push_back(IndexArray[0u]);
+					indices.push_back(IndexArray[2u]);
+					indices.push_back(IndexArray[1u]);
+					indices.push_back(IndexArray[1u]);
+					indices.push_back(IndexArray[2u]);
+					indices.push_back(IndexArray[3u]);
 				}
 			}
 		}

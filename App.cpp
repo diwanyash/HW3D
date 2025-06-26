@@ -1,32 +1,61 @@
 #include "App.h"
 #include "Box.h"
 #include "Melon.h"
+#include "Pyramid.h"
+#include "Drawable.h"
 #include <memory>
 #include "imgui/imgui.h"
 
 App::App()
 	:
-	wnd( 800, 600, "happy window" )
+	wnd(800, 600, "happy window")
 {
-	std::mt19937 rng(std::random_device{}());
-	std::uniform_real_distribution<float> adist(0.0f, 3.1415f * 2.0f);
-	std::uniform_real_distribution<float> ddist(0.0f, 3.1415f * 2.0f);
-	std::uniform_real_distribution<float> odist(0.0f, 3.1415f * 0.3f);
-	std::uniform_real_distribution<float> rdist(6.0f, 20.0f);
-	std::uniform_real_distribution<float> bdist(1.0f, 3.0f);
-	std::uniform_int_distribution<int> latdiv( 6, 12 );
-	std::uniform_int_distribution<int> longdiv( 12, 24 );
-	std::uniform_int_distribution<int> obj( 10, 50 );
-	for (int i = obj(rng); i > 0; i--)
+
+	class Factory
 	{
-		melons.push_back(std::make_unique<Melon>(wnd.Gfx(),
-			rng, adist, ddist, odist, rdist, bdist, longdiv, latdiv));
-	}
-	for (int i = obj(rng); i > 0; i--)
-	{
-		boxes.push_back(std::make_unique<Box>(wnd.Gfx(),
-			rng, adist, ddist, odist, rdist, bdist));
-	}
+	public:
+		Factory( Graphics& gfx )
+			:
+			gfx(gfx)
+		{}
+		std::unique_ptr<Drawable> operator()()
+		{
+			switch ( typedist( rng ) )
+			{
+			case 0:
+				return std::make_unique<Pyramid>(
+				gfx, rng, adist, ddist, odist, rdist);
+				break;
+			case 1:
+				return std::make_unique<Melon>(
+				gfx, rng, adist, ddist, odist, rdist, bdist, longdiv, latdiv);
+				break;
+			case 2:
+				return std::make_unique<Box>(
+				gfx, rng, adist, ddist, odist, rdist, bdist);
+				break;
+			default:
+				assert( false && "Bad Drawable type in factory" );
+				return {};
+			}
+		}
+	private:
+		Graphics& gfx;
+		std::mt19937 rng{ std::random_device{}() };
+		std::uniform_real_distribution<float> adist{ 0.0f, 3.1415f * 2.0f };
+		std::uniform_real_distribution<float> ddist{ 0.0f, 3.1415f * 2.0f };
+		std::uniform_real_distribution<float> odist{ 0.0f, 3.1415f * 0.3f };
+		std::uniform_real_distribution<float> rdist{ 6.0f, 20.0f };
+		std::uniform_real_distribution<float> bdist{ 1.0f, 3.0f };
+		std::uniform_int_distribution<int> latdiv{ 6, 20 };
+		std::uniform_int_distribution<int> longdiv{ 12, 40 };
+		std::uniform_int_distribution<int> typedist{ 0, 2 };
+	};
+
+	Factory factory( wnd.Gfx() );
+	drawable.reserve( nDrawables );
+	std::generate_n( std::back_inserter(drawable), nDrawables, factory );
+
 	wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 1000.0f));
 }
 
@@ -65,22 +94,17 @@ void App::DoFrame()
 		wnd.Gfx().EnableImgui();
 	}
 
-	for (auto& b : melons)
+	for (auto& d : drawable)
 	{
-		b->Update(dt);
-		b->Draw(wnd.Gfx());
+		d->Update(dt);
+		d->Draw(wnd.Gfx());
 	}	
-	for (auto& b : boxes)
-	{
-		b->Update(dt);
-		b->Draw(wnd.Gfx());
-	}
+
 	static char Buffer[1024];
 	if (ImGui::Begin("Simulation of speed"))
 	{
  		ImGui::SliderFloat("Speed Factor", &SpeedFactor, 0.0f, 5.0f);
 		ImGui::Text("Appplication Average %.3f ms/frame (%.1f FPS)",1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		ImGui::Text("Boxes = %d , Melons = %d", (int)boxes.size(), (int)melons.size());
 		ImGui::InputText("Some Text", Buffer, sizeof(Buffer));
 	}
 

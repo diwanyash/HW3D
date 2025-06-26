@@ -15,8 +15,8 @@ private:
 	ImguiManager imgui;
 	Window wnd;
 	FrameTimer ft;
-	std::vector <std::unique_ptr<class Box>> boxes;
-	std::vector <std::unique_ptr<class Melon>> melons;
+	std::vector<std::unique_ptr<class Drawable>> drawable;
+	static constexpr int nDrawables = 200;
 	float SpeedFactor = 0.7f;
 	float color[3] = {0.0f,0.0f,0.0f};
 	Camera cam;

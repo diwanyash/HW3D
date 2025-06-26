@@ -67,7 +67,7 @@ App::App()
 	drawable.reserve( nDrawables );
 	std::generate_n( std::back_inserter(drawable), nDrawables, factory );
 
-	Surface::FromFile( "E:/chilli game dev/16HW1/Image/doge.jpg");
+	Surface::FromFile( "E:/chilli game dev/HW3D/Image/doge.jpg");
 
 	wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 1000.0f));
 }

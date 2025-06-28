@@ -1,15 +1,15 @@
 #include "App.h"
-#include <memory>
 #include "Box.h"
 #include "Melon.h"
 #include "Pyramid.h"
 #include "Plane.h"
 #include "Drawable.h"
+#include <memory>
+#include "imgui/imgui.h"
 #include "Surface.h"
 #include "GDIPlusManager.h"
-#include "imgui/imgui.h"
 
-GDIPlusManager gdipm;
+GDIPlusManager gdi;
 
 App::App()
 	:

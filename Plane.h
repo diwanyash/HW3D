@@ -14,7 +14,8 @@ public:
 
 		const int nVerticesSize = division + 1;
 
-		std::vector<V> vertices(sq(nVerticesSize + 1));
+		std::vector<V> vertices(sq(nVerticesSize));
+
 		{
 			const float side = size / 2.0f;
 			const float divisionSize = size / float(division);
@@ -25,7 +26,7 @@ public:
 				const float y_pos = float(y) * divisionSize;
 				for (int x = 0; x < nVerticesSize; x++, i++)
 				{
-					dx::XMStoreFloat3(&vertices[i].pos, dx::XMVectorAdd(bottomLeft , dx::XMVectorSet(float(x) * divisionSize, y_pos, 0.0f, 0.0f)));
+					dx::XMStoreFloat4(&vertices[i].pos, dx::XMVectorAdd(bottomLeft , dx::XMVectorSet(float(x) * divisionSize, y_pos, 0.0f, 0.0f)));
 				}
 			}
 		}
@@ -54,5 +55,12 @@ public:
 			}
 		}
 		return { std::move(vertices), std::move(indices) };
+	}
+
+
+	template<class V>
+	static IndexedTriangleList<V> Make()
+	{
+		return GetPlain<V>( 1, 10.0f );
 	}
 };

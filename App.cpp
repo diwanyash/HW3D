@@ -2,7 +2,7 @@
 #include "Box.h"
 #include "Melon.h"
 #include "Pyramid.h"
-#include "Plane.h"
+#include "Sheet.h"
 #include "Drawable.h"
 #include <memory>
 #include "imgui/imgui.h"
@@ -16,11 +16,10 @@ App::App()
 	wnd(800, 600, "happy window")
 {
 	struct Vertex{
+
 		DirectX::XMFLOAT3 pos;
 
 	};
-
-	auto modw = Plane::GetPlain<Vertex>(7,1.0f);
 
 	class Factory
 	{
@@ -45,6 +44,10 @@ App::App()
 				return std::make_unique<Box>(
 				gfx, rng, adist, ddist, odist, rdist, bdist);
 				break;
+			case 3:
+				return std::make_unique<Sheet>(
+				gfx, rng, adist, ddist, odist, rdist );
+				break;
 			default:
 				assert( false && "Bad Drawable type in factory" );
 				return {};
@@ -60,14 +63,12 @@ App::App()
 		std::uniform_real_distribution<float> bdist{ 1.0f, 3.0f };
 		std::uniform_int_distribution<int> latdiv{ 6, 20 };
 		std::uniform_int_distribution<int> longdiv{ 12, 40 };
-		std::uniform_int_distribution<int> typedist{ 0, 2 };
+		std::uniform_int_distribution<int> typedist{ 3, 3 };
 	};
 
 	Factory factory( wnd.Gfx() );
 	drawable.reserve( nDrawables );
 	std::generate_n( std::back_inserter(drawable), nDrawables, factory );
-
-	Surface::FromFile( "E:/chilli game dev/HW3D/Image/doge.jpg");
 
 	wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 1000.0f));
 }

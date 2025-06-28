@@ -114,6 +114,7 @@ Surface Surface::FromFile(const std::string& name)
 			throw Exception(__LINE__, __FILE__, ss.str());
 		}
 
+		width = bitmap.GetWidth();
 		height = bitmap.GetHeight();
 		pBuffer = std::make_unique<Color[]>(width * height);
 

@@ -124,7 +124,7 @@ Surface Surface::FromFile(const std::string& name)
 			{
 				Gdiplus::Color c;
 				bitmap.GetPixel(x, y, &c);
-				pBuffer[y * pitch + x] = c.GetValue();
+				pBuffer[y * width + x] = c.GetValue();
 			}
 		}
 	}

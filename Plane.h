@@ -19,14 +19,18 @@ public:
 		{
 			const float side = size / 2.0f;
 			const float divisionSize = size / float(division);
-			auto bottomLeft = dx::XMVectorSet( - side, -side, 0.0f, 0.0f );
+			auto bottomLeft = dx::XMVectorSet( -side, -side, 0.0f, 0.0f );
 
 			for (int y = 0, i = 0; y < nVerticesSize; y++)
 			{
 				const float y_pos = float(y) * divisionSize;
 				for (int x = 0; x < nVerticesSize; x++, i++)
 				{
-					dx::XMStoreFloat4(&vertices[i].pos, dx::XMVectorAdd(bottomLeft , dx::XMVectorSet(float(x) * divisionSize, y_pos, 0.0f, 0.0f)));
+					const auto v = dx::XMVectorAdd(
+						bottomLeft,
+						dx::XMVectorSet(float(x) * divisionSize, y_pos, 0.0f, 0.0f));
+					
+					dx::XMStoreFloat3(&vertices[i].pos, v);
 				}
 			}
 		}
@@ -61,6 +65,6 @@ public:
 	template<class V>
 	static IndexedTriangleList<V> Make()
 	{
-		return GetPlain<V>( 1, 10.0f );
+		return GetPlain<V>( 1, 1.0f );
 	}
 };

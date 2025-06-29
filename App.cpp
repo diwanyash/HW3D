@@ -8,6 +8,7 @@
 #include "imgui/imgui.h"
 #include "Surface.h"
 #include "GDIPlusManager.h"
+#include "SkinnedCube.h"
 
 GDIPlusManager gdi;
 
@@ -48,6 +49,10 @@ App::App()
 				return std::make_unique<Sheet>(
 				gfx, rng, adist, ddist, odist, rdist );
 				break;
+			case 4:
+				return std::make_unique<SkinnedCube>(
+				gfx, rng, adist, ddist, odist, rdist );
+				break;
 			default:
 				assert( false && "Bad Drawable type in factory" );
 				return {};
@@ -63,7 +68,7 @@ App::App()
 		std::uniform_real_distribution<float> bdist{ 1.0f, 3.0f };
 		std::uniform_int_distribution<int> latdiv{ 6, 20 };
 		std::uniform_int_distribution<int> longdiv{ 12, 40 };
-		std::uniform_int_distribution<int> typedist{ 0, 3 };
+		std::uniform_int_distribution<int> typedist{ 0, 4 };
 	};
 
 	Factory factory( wnd.Gfx() );

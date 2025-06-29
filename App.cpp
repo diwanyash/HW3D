@@ -103,19 +103,29 @@ void App::DoFrame()
 	wnd.Gfx().BeginFrame(color[0], color[1], color[2]);
 	wnd.Gfx().SetCamera(cam.GetMatrix());
 
+	while( !wnd.kbd.KeyIsEmpty() )
+	{
+		if (wnd.kbd.KeyIsPressed('I'))
+		{
+			if (imguivis)
+			{
+				imguivis = false;
+				wnd.Gfx().DisableImgui();
+			}
+			else
+			{
+				imguivis = true;
+				wnd.Gfx().EnableImgui();
+			}
+		}
+		wnd.kbd.Flush();
+	}
 
-	if (wnd.kbd.KeyIsPressed(VK_SPACE))
-	{
-		wnd.Gfx().DisableImgui();
-	}
-	else
-	{
-		wnd.Gfx().EnableImgui();
-	}
+
 
 	for (auto& d : drawable)
 	{
-		d->Update(dt);
+		d->Update(wnd.kbd.KeyIsPressed(VK_SPACE) ? 0.0f : dt);
 		d->Draw(wnd.Gfx());
 	}	
 
@@ -124,7 +134,7 @@ void App::DoFrame()
 	{
  		ImGui::SliderFloat("Speed Factor", &SpeedFactor, 0.0f, 5.0f);
 		ImGui::Text("Appplication Average %.3f ms/frame (%.1f FPS)",1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		ImGui::InputText("Some Text", Buffer, sizeof(Buffer));
+		ImGui::Text("imgui = %d", imguivis);
 	}
 
 	ImGui::End();

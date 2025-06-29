@@ -37,11 +37,11 @@ Sheet::Sheet(Graphics& gfx, std::mt19937& rng, std::uniform_real_distribution<fl
 
 		auto model = Plane::GetPlain<Vertex>(1, 2.0f);
 		model.vertices[0].tex = { 0.0f,0.0f };
-		model.vertices[1].tex = {clamping,0.0f };
-		model.vertices[2].tex = { 0.0f,clamping };
-		model.vertices[3].tex = { clamping,clamping };
+		model.vertices[1].tex = { 0.0f,clamping};
+		model.vertices[2].tex = {clamping,0.0f };
+		model.vertices[3].tex = { clamping,clamping};
 
-		AddStaticBind( std::make_unique<Texture>( gfx, Surface::FromFile( "E:/chilli game dev/HW3D/Image/kappa50.png" )));
+		AddStaticBind( std::make_unique<Texture>( gfx, Surface::FromFile( "E:/chilli game dev/HW3D/Image/doge.jpg" )));
 		
 		AddStaticBind( std::make_unique<VertexBuffer>( gfx,model.vertices ));
 		

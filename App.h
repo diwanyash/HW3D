@@ -16,8 +16,8 @@ private:
 	Window wnd;
 	FrameTimer ft;
 	std::vector<std::unique_ptr<class Drawable>> drawable;
-	static constexpr int nDrawables = 20;
-	float SpeedFactor = 0.7f;
+	static constexpr int nDrawables = 90;
+	float SpeedFactor = 0.4f;
 	float color[3] = {0.0f,0.0f,0.0f};
 	Camera cam;
 };

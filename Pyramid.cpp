@@ -39,7 +39,7 @@ Pyramid::Pyramid(Graphics& gfx, std::mt19937& rng,
 
 		auto model = Cone::MakeTesselated<Vertex>(4);
 		
-		model.Transform(dx::XMMatrixScaling( 1.0f, 1.0f, 1.5f ));
+		model.Transform(dx::XMMatrixScaling( 1.0f, 1.0f, 0.7f ));
 
 		model.vertices[0].color = { 255, 255, 0 };
 		model.vertices[1].color = { 255, 255, 0 };
@@ -93,7 +93,7 @@ DirectX::XMMATRIX Pyramid::GetTransformXM() const noexcept
 {
 	namespace dx = DirectX;
 
-		return dx::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
+	return dx::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
 		dx::XMMatrixTranslation(r, 0.0f, 0.0f) *
 		dx::XMMatrixRotationRollPitchYaw(theta, phi, chi) *
 		dx::XMMatrixTranslation(0.0f, 0.0f, 20.0f);

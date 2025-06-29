@@ -13,7 +13,7 @@ public:
 
 		assert( longdiv >= 3 );
 
-		const float radius = 2.0f;
+		const float radius = 1.0f;
 		const auto apexbase = dx::XMVectorSet(0.0f, 0.0f, 2.0f, 0.0f);
 		const auto apexop = dx::XMVectorSet(0.0f, radius, 0.0f, 0.0f);
 		const auto apexcenter = dx::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);

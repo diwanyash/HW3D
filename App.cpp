@@ -134,7 +134,7 @@ void App::DoFrame()
 	{
  		ImGui::SliderFloat("Speed Factor", &SpeedFactor, 0.0f, 5.0f);
 		ImGui::Text("Appplication Average %.3f ms/frame (%.1f FPS)",1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		ImGui::Text("imgui = %d", imguivis);
+		ImGui::Text("Press 'I' to Disable/Enable Imgui");
 	}
 
 	ImGui::End();

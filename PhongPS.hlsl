@@ -20,5 +20,5 @@ float4 main( float3 worldpos : Position, float3 n : Normal ) : SV_TARGET
     float atten = 1.0f / (attConst + attLin * distToL + attQuad * (distToL * distToL));
     float3 d = diffuseColor * diffuse_intensity * atten * max(0.0f, dot(dirToL,n));
     
-    return float4(saturate( d + ambient),1.0f);
+    return float4(saturate( d + ambient) * materialColor ,1.0f);
 }

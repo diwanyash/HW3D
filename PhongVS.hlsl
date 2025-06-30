@@ -11,11 +11,11 @@ struct VSOut
     float4 pos : SV_Position;
 };
 
-float4 main( float3 pos : POSITION, float3 n : Normal ) : SV_POSITION
+VSOut main( float3 pos : Position, float3 n : Normal )
 {
     VSOut vsout;
     vsout.worldpos = (float3)mul(float4(pos, 1.0f), model);
     vsout.normal = mul(n, (float3x3)model);
-    vsout.pos = mul((float4)(pos,1.0f),modelViewProj);
+    vsout.pos = mul(float4(pos,1.0f),modelViewProj);
     return vsout;
 }

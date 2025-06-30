@@ -3,6 +3,7 @@
 #include "FrameTimer.h"
 #include "ImguiManager.h"
 #include "Camera.h"
+#include "PointLight.h"
 
 class App {
 public:
@@ -18,8 +19,9 @@ private:
 	std::vector<std::unique_ptr<class Drawable>> drawable;
 	static constexpr int nDrawables = 120;
 	float SpeedFactor = 0.4f;
-	float color[3] = {0.0f,0.0f,0.15f};
+	float color[3] = {0.0f,0.0f,0.0f};
 	bool imguivis = true;
 	unsigned char e;
 	Camera cam;
+	PointLight light;
 };

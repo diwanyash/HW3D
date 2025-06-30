@@ -50,15 +50,6 @@ Box::Box(Graphics& gfx, std::mt19937& rng,
 		// bind index buffer 
 		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, model.indices));
 
-		// create pixel const buffer
-		struct PSLightConst
-		{
-			dx::XMVECTOR pos;
-		};
-
-		// bind constant pixel buffer
-		AddStaticBind(std::make_unique<PixelConstantBuffer<PSLightConst>>(gfx));
-
 		// create input layout
 		const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
 		{

@@ -14,14 +14,9 @@ GDIPlusManager gdi;
 
 App::App()
 	:
-	wnd(800, 600, "happy window")
+	wnd(800, 600, "happy window"),
+	light( wnd.Gfx(), 0.5f)
 {
-	struct Vertex{
-
-		DirectX::XMFLOAT3 pos;
-
-	};
-
 	class Factory
 	{
 	public:
@@ -33,26 +28,26 @@ App::App()
 		{
 			switch ( typedist( rng ) )
 			{
-			case 0:
-				return std::make_unique<Pyramid>(
-				gfx, rng, adist, ddist, odist, rdist);
-				break;
-			case 1:
-				return std::make_unique<Melon>(
-				gfx, rng, adist, ddist, odist, rdist, bdist, longdiv, latdiv);
-				break;
+			//case 0:
+			//	return std::make_unique<Pyramid>(
+			//	gfx, rng, adist, ddist, odist, rdist);
+			//	break;
+			//case 1:
+			//	return std::make_unique<Melon>(
+			//	gfx, rng, adist, ddist, odist, rdist, bdist, longdiv, latdiv);
+			//	break;
 			case 2:
 				return std::make_unique<Box>(
 				gfx, rng, adist, ddist, odist, rdist, bdist);
 				break;
-			case 3:
-				return std::make_unique<Sheet>(
-				gfx, rng, adist, ddist, odist, rdist );
-				break;
-			case 4:
-				return std::make_unique<SkinnedCube>(
-				gfx, rng, adist, ddist, odist, rdist );
-				break;
+			//case 3:
+			//	return std::make_unique<Sheet>(
+			//	gfx, rng, adist, ddist, odist, rdist );
+			//	break;
+			//case 4:
+			//	return std::make_unique<SkinnedCube>(
+			//	gfx, rng, adist, ddist, odist, rdist );
+			//	break;
 			default:
 				assert( false && "Bad Drawable type in factory" );
 				return {};
@@ -68,7 +63,7 @@ App::App()
 		std::uniform_real_distribution<float> bdist{ 1.0f, 3.0f };
 		std::uniform_int_distribution<int> latdiv{ 6, 20 };
 		std::uniform_int_distribution<int> longdiv{ 12, 40 };
-		std::uniform_int_distribution<int> typedist{ 0, 4 };
+		std::uniform_int_distribution<int> typedist{ 2, 2 };
 	};
 
 	Factory factory( wnd.Gfx() );
@@ -102,6 +97,7 @@ void App::DoFrame()
 
 	wnd.Gfx().BeginFrame(color[0], color[1], color[2]);
 	wnd.Gfx().SetCamera(cam.GetMatrix());
+	light.Bind( wnd.Gfx() );
 
 	while( !wnd.kbd.KeyIsEmpty() )
 	{
@@ -128,6 +124,7 @@ void App::DoFrame()
 		d->Update(wnd.kbd.KeyIsPressed(VK_SPACE) ? 0.0f : dt);
 		d->Draw(wnd.Gfx());
 	}	
+	light.Draw( wnd.Gfx() );
 
 	static char Buffer[1024];
 	if (ImGui::Begin("Simulation of speed"))
@@ -140,6 +137,7 @@ void App::DoFrame()
 	ImGui::End();
 
 	cam.SpawnControlWindow();
+	light.SpawnControlWindow();
 
 	wnd.Gfx().EndFrame();
 }

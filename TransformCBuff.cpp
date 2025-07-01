@@ -1,6 +1,6 @@
 #include "TransformCBuff.h"
 
-TransformCBuff::TransformCBuff(Graphics& gfx, const Drawable& parent, UINT slot = 0u)
+TransformCBuff::TransformCBuff(Graphics& gfx, const Drawable& parent, UINT slot)
 	:
 	parent( parent )
 {
@@ -12,13 +12,12 @@ TransformCBuff::TransformCBuff(Graphics& gfx, const Drawable& parent, UINT slot 
 
 void TransformCBuff::Bind(Graphics & gfx) noexcept
 {
-	const auto model = parent.GetTransformXM();
+	const auto modelView = parent.GetTransformXM() * gfx.GetCamera();
 	const Transforms tf =
 	{
-		DirectX::XMMatrixTranspose(model),
+		DirectX::XMMatrixTranspose(modelView),
 		DirectX::XMMatrixTranspose(
-			model *
-			gfx.GetCamera() *
+			modelView *
 			gfx.GetProjection()
 		)
 	};

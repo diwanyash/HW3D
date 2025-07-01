@@ -26,6 +26,8 @@ App::App()
 		{}
 		std::unique_ptr<Drawable> operator()()
 		{
+			const DirectX::XMFLOAT3 mat = { cdist(rng),  cdist(rng),  cdist(rng), };
+
 			switch ( typedist( rng ) )
 			{
 			//case 0:
@@ -38,7 +40,7 @@ App::App()
 			//	break;
 			case 2:
 				return std::make_unique<Box>(
-				gfx, rng, adist, ddist, odist, rdist, bdist);
+				gfx, rng, adist, ddist, odist, rdist, bdist, mat);
 				break;
 			//case 3:
 			//	return std::make_unique<Sheet>(
@@ -61,6 +63,7 @@ App::App()
 		std::uniform_real_distribution<float> odist{ 0.0f, 3.1415f * 0.3f };
 		std::uniform_real_distribution<float> rdist{ 6.0f, 20.0f };
 		std::uniform_real_distribution<float> bdist{ 1.0f, 3.0f };
+		std::uniform_real_distribution<float> cdist{ 0.0f, 1.0f };
 		std::uniform_int_distribution<int> latdiv{ 6, 20 };
 		std::uniform_int_distribution<int> longdiv{ 12, 40 };
 		std::uniform_int_distribution<int> typedist{ 2, 2 };
@@ -97,7 +100,7 @@ void App::DoFrame()
 
 	wnd.Gfx().BeginFrame(color[0], color[1], color[2]);
 	wnd.Gfx().SetCamera(cam.GetMatrix());
-	light.Bind( wnd.Gfx() );
+	light.Bind( wnd.Gfx(), cam.GetMatrix() );
 
 	while( !wnd.kbd.KeyIsEmpty() )
 	{
@@ -129,7 +132,7 @@ void App::DoFrame()
 	static char Buffer[1024];
 	if (ImGui::Begin("Simulation of speed"))
 	{
- 		ImGui::SliderFloat("Speed Factor", &SpeedFactor, 0.0f, 5.0f);
+ 		ImGui::SliderFloat("Speed Factor", &SpeedFactor, 0.0f, 5.0f, "%.4f", ImGuiSliderFlags_Logarithmic);
 		ImGui::Text("Appplication Average %.3f ms/frame (%.1f FPS)",1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::Text("Press 'I' to Disable/Enable Imgui");
 	}

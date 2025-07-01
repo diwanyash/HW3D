@@ -15,7 +15,7 @@ public:
 		memcpy(msr.pData, &consts, sizeof(consts));
 		GetContext(gfx)->Unmap(pConstantBuffer.Get(), 0u);
 	}
-	ConstantBuffer(Graphics& gfx, UINT slot, const C& consts)
+	ConstantBuffer(Graphics& gfx, const C& consts, UINT slot = 0u)
 		:
 		slot(slot)
 	{
@@ -32,7 +32,7 @@ public:
 		sd.pSysMem = &consts;
 		GFX_THROW_INFO(GetDevice(gfx)->CreateBuffer(&cbd, &sd, &pConstantBuffer));
 	}
-	ConstantBuffer(Graphics& gfx, UINT slot)
+	ConstantBuffer(Graphics& gfx, UINT slot = 0u)
 		:
 		slot(slot)
 	{

@@ -5,16 +5,30 @@ PointLight::PointLight(Graphics& gfx, float radius)
 	:
 	mesh( gfx, radius ),
 	cbuf( gfx )
-{}
+{
+	Reset();
+}
 
 void PointLight::SpawnControlWindow() noexcept
 {
 	if ( ImGui::Begin( "Light" ))
 	{
 		ImGui::Text( "Position" );
-		ImGui::SliderFloat( "X", &pos.x, -60.0f, 60.0f, "%.1f" );
-		ImGui::SliderFloat( "Y", &pos.y, -60.0f, 60.0f, "%.1f" );
-		ImGui::SliderFloat( "Z", &pos.z, -60.0f, 60.0f, "%.1f" );
+		ImGui::SliderFloat( "X", &pcbuf.pos.x, -60.0f, 60.0f, "%.1f" );
+		ImGui::SliderFloat( "Y", &pcbuf.pos.y, -60.0f, 60.0f, "%.1f" );
+		ImGui::SliderFloat( "Z", &pcbuf.pos.z, -60.0f, 60.0f, "%.1f" );
+
+		ImGui::Text("Intensirt/Color");
+		ImGui::SliderFloat("Intensity", &pcbuf.diffuse_intensity, 0.01f, 2.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
+		ImGui::ColorEdit3("Diffuse Color", &pcbuf.diffuseColor.x);
+		ImGui::ColorEdit3("Ambient", &pcbuf.ambient.x);
+		ImGui::ColorEdit3("Material", &pcbuf.materialColor.x);
+		
+		ImGui::Text("FallOff");
+		ImGui::SliderFloat("Constant", &pcbuf.attConst, 0.05f, 10.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
+		ImGui::SliderFloat("Linear", &pcbuf.attLin, 0.0001f, 4.0f, "%.4f", ImGuiSliderFlags_Logarithmic);
+		ImGui::SliderFloat("Quadratic", &pcbuf.attQuad, 0.0000001f, 10.0f, "%.7f", ImGuiSliderFlags_Logarithmic);
+
 		if( ImGui::Button("Reset") )
 		{
 			Reset();
@@ -25,18 +39,28 @@ void PointLight::SpawnControlWindow() noexcept
 
 void PointLight::Reset() noexcept
 {
-	pos = { 0.0f, 0.0f, 0.0f };
+	pcbuf =
+	{
+		{ 0.0f , 0.0f, 0.0f },
+		{ 0.7f, 0.7f, 0.9f },
+		{ 0.05f, 0.05f, 0.05f },
+		{ 1.0f, 1.0f, 1.0f },
+		1.0f,
+		1.0f,
+		0.045f,
+		0.0075f,
+	};
 }
 
 void PointLight::Draw(Graphics& gfx) const noexcept(!IS_DEBUG)
 {
-	mesh.SetPos( pos );
+	mesh.SetPos( pcbuf.pos );
 	mesh.Draw( gfx );
 }
 
 void PointLight::Bind(Graphics& gfx) const noexcept
 {
-	cbuf.Update(gfx, PointLightCBuf{ pos });
+	cbuf.Update(gfx, PointLightCBuf{ pcbuf });
 	cbuf.Bind( gfx );
 }
 

@@ -1,7 +1,7 @@
 #pragma once
-#include "DrawableBase.h"
+#include "BaseObject.h"
 
-class Box : public DrawableBase<Box>
+class Box : public BaseObject<Box>
 {
 public:
 	Box(Graphics& gfx,std::mt19937& rng,
@@ -12,25 +12,7 @@ public:
 		std::uniform_real_distribution<float>& bdist,
 		DirectX::XMFLOAT3 material
 	);
-	void Update( float dt ) noexcept override;
 	DirectX::XMMATRIX GetTransformXM() const noexcept;
 private:
-	// pos
-	float r;
-	float roll = 0.0f;
-	float pitch = 0.0f;
-	float yaw = 0.0f;
-	float theta;
-	float phi;
-	float chi;
-	// speed by d/t
-	float droll;
-	float dpitch;
-	float dyaw;
-	float dtheta;
-	float dphi;
-	float dchi;
-
-
 	DirectX::XMFLOAT3X3 mt;
 };

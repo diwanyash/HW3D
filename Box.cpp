@@ -1,6 +1,7 @@
 #include "Box.h"
 #include "Cube.h"
 #include "Plane.h"
+#include "BaseObject.h"
 #include "BindableBase.h"
 #include "DirectXMath.h"
 #include "GraphicsThrowMacros.h"
@@ -13,16 +14,7 @@ Box::Box(Graphics& gfx, std::mt19937& rng,
 	std::uniform_real_distribution<float>& bdist,
 	DirectX::XMFLOAT3 Material)
 	:
-	r(rdist(rng)),
-	droll(ddist(rng)),
-	dpitch(ddist(rng)),
-	dyaw(ddist(rng)),
-	dtheta(odist(rng)),
-	dphi(odist(rng)),
-	dchi(odist(rng)),
-	theta(adist(rng)),
-	phi(adist(rng)),
-	chi(adist(rng))
+	BaseObject( gfx, rng, adist, ddist, odist, rdist, bdist )
 {
 	namespace dx = DirectX;
 
@@ -85,24 +77,10 @@ Box::Box(Graphics& gfx, std::mt19937& rng,
 	dx::XMStoreFloat3x3(
 		&mt,
 		dx::XMMatrixScaling(1.0f, 1.0f, bdist(rng))); 
-}
 
-void Box::Update(float dt) noexcept
-{
-	roll +=  droll  * dt;
-	pitch += dpitch * dt;
-	yaw +=   dyaw   * dt;
-	theta += dtheta * dt;
-	phi +=   dphi   * dt;
-	chi +=   dchi   * dt;
 }
 
 DirectX::XMMATRIX Box::GetTransformXM() const noexcept
 {
-	namespace dx = DirectX;
-
-	return dx::XMLoadFloat3x3(&mt) *
-		dx::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
-		dx::XMMatrixTranslation(r, 0.0f , 0.0f) *
-		dx::XMMatrixRotationRollPitchYaw(theta, phi, chi);
+	return DirectX::XMLoadFloat3x3(&mt) * BaseObject::GetTransformXM();
 }

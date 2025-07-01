@@ -13,7 +13,7 @@ private:
 		DirectX::XMMATRIX model;
 	};
 public:
-	TransformCBuff( Graphics& gfx, const Drawable& parent);
+	TransformCBuff( Graphics& gfx, const Drawable& parent, UINT slot = 0u);
 	void Bind( Graphics& gfx ) noexcept override;
 private:
 	static std::unique_ptr<VertexConstantBuffer<Transforms>> pVcbuf;

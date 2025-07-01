@@ -9,6 +9,7 @@
 #include "Surface.h"
 #include "GDIPlusManager.h"
 #include "SkinnedCube.h"
+#include "Cylinder.h"
 
 GDIPlusManager gdi;
 
@@ -34,10 +35,10 @@ App::App()
 			//	return std::make_unique<Pyramid>(
 			//	gfx, rng, adist, ddist, odist, rdist);
 			//	break;
-			//case 1:
-			//	return std::make_unique<Melon>(
-			//	gfx, rng, adist, ddist, odist, rdist, bdist, longdiv, latdiv);
-			//	break;
+			case 1:
+				return std::make_unique<Cylinder>(
+				gfx, rng, adist, ddist, odist, rdist, bdist, tdist);
+				break;
 			case 2:
 				return std::make_unique<Box>(
 				gfx, rng, adist, ddist, odist, rdist, bdist, mat);
@@ -66,7 +67,8 @@ App::App()
 		std::uniform_real_distribution<float> cdist{ 0.0f, 1.0f };
 		std::uniform_int_distribution<int> latdiv{ 6, 20 };
 		std::uniform_int_distribution<int> longdiv{ 12, 40 };
-		std::uniform_int_distribution<int> typedist{ 2, 2 };
+		std::uniform_int_distribution<int> typedist{ 1, 2 };
+		std::uniform_int_distribution<int> tdist{ 3, 30 };
 	};
 
 	Factory factory( wnd.Gfx() );

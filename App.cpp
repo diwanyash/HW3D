@@ -31,13 +31,13 @@ App::App()
 
 			switch ( typedist( rng ) )
 			{
-			//case 0:
-			//	return std::make_unique<Pyramid>(
-			//	gfx, rng, adist, ddist, odist, rdist);
-			//	break;
+			case 0:
+				return std::make_unique<Pyramid>(
+				gfx, rng, adist, ddist, odist, rdist, tdist);
+				break;
 			case 1:
 				return std::make_unique<Cylinder>(
-				gfx, rng, adist, ddist, odist, rdist, bdist, tdist);
+				gfx, rng, adist, ddist, odist, rdist,tdist);
 				break;
 			case 2:
 				return std::make_unique<Box>(
@@ -65,10 +65,8 @@ App::App()
 		std::uniform_real_distribution<float> rdist{ 6.0f, 20.0f };
 		std::uniform_real_distribution<float> bdist{ 1.0f, 3.0f };
 		std::uniform_real_distribution<float> cdist{ 0.0f, 1.0f };
-		std::uniform_int_distribution<int> latdiv{ 6, 20 };
-		std::uniform_int_distribution<int> longdiv{ 12, 40 };
-		std::uniform_int_distribution<int> typedist{ 1, 2 };
-		std::uniform_int_distribution<int> tdist{ 3, 30 };
+		std::uniform_int_distribution<int> typedist{ 0, 2 };
+		std::uniform_int_distribution<int> tdist{ 3, 20 };
 	};
 
 	Factory factory( wnd.Gfx() );

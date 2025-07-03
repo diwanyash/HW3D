@@ -1,5 +1,6 @@
 #pragma once
 #include "DrawableBase.h"
+//#include "DeadMath.h"
 
 template<class T>
 class BaseObject : public DrawableBase<T>
@@ -10,8 +11,7 @@ public:
 		std::uniform_real_distribution<float>& adist,
 		std::uniform_real_distribution<float>& ddist,
 		std::uniform_real_distribution<float>& odist,
-		std::uniform_real_distribution<float>& rdist,
-		std::uniform_real_distribution<float>& bdist)
+		std::uniform_real_distribution<float>& rdist)
 		: 
 		r(rdist(rng)),
 		droll(ddist(rng)),
@@ -26,12 +26,12 @@ public:
 	{}
 	void Update(float dt) noexcept override
 	{
-		roll += droll * dt;
-		pitch += dpitch * dt;
-		yaw += dyaw * dt;
-		theta += dtheta * dt;
-		phi += dphi * dt;
-		chi += dchi * dt;
+		roll +=	(droll * dt );
+		pitch +=(dpitch * dt);
+		yaw +=	(dyaw * dt  );
+		theta +=(dtheta * dt);
+		phi +=	(dphi * dt  );
+		chi +=	(dchi * dt  );
 	}
 	DirectX::XMMATRIX GetTransformXM() const noexcept
 	{

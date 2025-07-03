@@ -14,7 +14,7 @@ Box::Box(Graphics& gfx, std::mt19937& rng,
 	std::uniform_real_distribution<float>& bdist,
 	DirectX::XMFLOAT3 Material)
 	:
-	BaseObject( gfx, rng, adist, ddist, odist, rdist, bdist )
+	BaseObject( gfx, rng, adist, ddist, odist, rdist)
 {
 	namespace dx = DirectX;
 

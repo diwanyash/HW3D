@@ -168,6 +168,9 @@
     <ClCompile Include="Cylinder.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
+    <ClCompile Include="AssImpTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsMessageMap.h">
@@ -339,6 +342,9 @@
       <Filter>Header Files\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="Cylinder.h">
+      <Filter>Header Files\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="AssImpTest.h">
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
   </ItemGroup>

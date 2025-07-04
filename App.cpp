@@ -10,6 +10,7 @@
 #include "GDIPlusManager.h"
 #include "SkinnedCube.h"
 #include "Cylinder.h"
+#include "AssImpTest.h"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -31,6 +32,7 @@ App::App()
 		std::unique_ptr<Drawable> operator()()
 		{
 			const DirectX::XMFLOAT3 mat = { cdist(rng),  cdist(rng),  cdist(rng), };
+			const DirectX::XMFLOAT3 mat2 = { 0.0f, 1.0f, 0.0f };
 
 			switch ( typedist( rng ) )
 			{
@@ -50,6 +52,10 @@ App::App()
 				return std::make_unique<SkinnedCube>(
 				gfx, rng, adist, ddist, odist, rdist );
 				break;
+			case 4:
+				return std::make_unique<AssImpTest>(
+					gfx, rng, adist, ddist, odist, rdist, mat, 2.0f);
+				break;
 			//case 4:
 			//	return std::make_unique<Sheet>(
 			//	gfx, rng, adist, ddist, odist, rdist );
@@ -68,7 +74,7 @@ App::App()
 		std::uniform_real_distribution<float> rdist{ 10.0f, 20.0f };
 		std::uniform_real_distribution<float> bdist{ 1.0f, 3.0f };
 		std::uniform_real_distribution<float> cdist{ 0.0f, 1.0f };
-		std::uniform_int_distribution<int> typedist{ 0, 3 };
+		std::uniform_int_distribution<int> typedist{ 0, 4 };
 		std::uniform_int_distribution<int> tdist{ 3, 30 };
 	};
 
@@ -83,11 +89,6 @@ App::App()
 			boxes.push_back(pb);
 		}
 	}
-
-	Assimp::Importer imp;
-	auto model = imp.ReadFile("E:/chilli game dev/HW3D/model/suzanne.obj", 
-		aiProcess_JoinIdenticalVertices | 
-		aiProcess_Triangulate );
 
 
 	wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 1000.0f));

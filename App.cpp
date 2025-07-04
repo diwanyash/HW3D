@@ -43,12 +43,12 @@ App::App()
 				return std::make_unique<Box>(
 				gfx, rng, adist, ddist, odist, rdist, bdist, mat);
 				break;
-			//case 3:
-			//	return std::make_unique<Sheet>(
-			//	gfx, rng, adist, ddist, odist, rdist );
-			//	break;
+			case 3:
+				return std::make_unique<SkinnedCube>(
+				gfx, rng, adist, ddist, odist, rdist );
+				break;
 			//case 4:
-			//	return std::make_unique<SkinnedCube>(
+			//	return std::make_unique<Sheet>(
 			//	gfx, rng, adist, ddist, odist, rdist );
 			//	break;
 			default:
@@ -62,11 +62,11 @@ App::App()
 		std::uniform_real_distribution<float> adist{ 0.0f, 3.1415f * 2.0f };
 		std::uniform_real_distribution<float> ddist{ 0.0f, 3.1415f * 2.0f };
 		std::uniform_real_distribution<float> odist{ 0.0f, 3.1415f * 0.3f };
-		std::uniform_real_distribution<float> rdist{ 6.0f, 20.0f };
+		std::uniform_real_distribution<float> rdist{ 10.0f, 20.0f };
 		std::uniform_real_distribution<float> bdist{ 1.0f, 3.0f };
 		std::uniform_real_distribution<float> cdist{ 0.0f, 1.0f };
-		std::uniform_int_distribution<int> typedist{ 0, 2 };
-		std::uniform_int_distribution<int> tdist{ 3, 20 };
+		std::uniform_int_distribution<int> typedist{ 0, 3 };
+		std::uniform_int_distribution<int> tdist{ 3, 30 };
 	};
 
 	Factory factory( wnd.Gfx() );

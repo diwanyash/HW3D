@@ -10,7 +10,7 @@ public:
 	{
 		namespace dx = DirectX;
 
-		const float side = size / 2.0f;
+		const float side = size;
 
 		std::vector<V> Vertices(8);
 
@@ -43,7 +43,7 @@ public:
 	{
 		namespace dx = DirectX;
 
-		const float side = size / 2.0f;
+		const float side = size;
 
 		std::vector<V> vertices(14);
 
@@ -92,7 +92,7 @@ public:
 	template<class V>
 	static IndexedTriangleList<V> MakeIndependent(float size = 1.0f)
 	{
-		const float side = size / 2.0f;
+		const float side = size;
 
 		std::vector<V> vertices(24);
 
@@ -133,5 +133,40 @@ public:
 		};
 
 	}
+
+	template<class V>
+	static IndexedTriangleList<V> MakeIndependentTextured()
+	{
+		auto itl = MakeIndependent<V>();
+
+
+		itl.vertices[0].tc = { 0.0f,0.0f };
+		itl.vertices[1].tc = { 1.0f,0.0f };
+		itl.vertices[2].tc = { 0.0f,1.0f };
+		itl.vertices[3].tc = { 1.0f,1.0f };
+		itl.vertices[4].tc = { 0.0f,0.0f };
+		itl.vertices[5].tc = { 1.0f,0.0f };
+		itl.vertices[6].tc = { 0.0f,1.0f };
+		itl.vertices[7].tc = { 1.0f,1.0f };
+		itl.vertices[8].tc = { 0.0f,0.0f };
+		itl.vertices[9].tc = { 1.0f,0.0f };
+		itl.vertices[10].tc = { 0.0f,1.0f };
+		itl.vertices[11].tc = { 1.0f,1.0f };
+		itl.vertices[12].tc = { 0.0f,0.0f };
+		itl.vertices[13].tc = { 1.0f,0.0f };
+		itl.vertices[14].tc = { 0.0f,1.0f };
+		itl.vertices[15].tc = { 1.0f,1.0f };
+		itl.vertices[16].tc = { 0.0f,0.0f };
+		itl.vertices[17].tc = { 1.0f,0.0f };
+		itl.vertices[18].tc = { 0.0f,1.0f };
+		itl.vertices[19].tc = { 1.0f,1.0f };
+		itl.vertices[20].tc = { 0.0f,0.0f };
+		itl.vertices[21].tc = { 1.0f,0.0f };
+		itl.vertices[22].tc = { 0.0f,1.0f };
+		itl.vertices[23].tc = { 1.0f,1.0f };
+
+		return itl;
+	}
+
 };
 

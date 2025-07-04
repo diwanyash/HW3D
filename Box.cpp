@@ -1,6 +1,7 @@
 #include "Box.h"
 #include "Cube.h"
 #include "Plane.h"
+#include "imgui/imgui.h"
 #include "BaseObject.h"
 #include "BindableBase.h"
 #include "DirectXMath.h"
@@ -63,16 +64,9 @@ Box::Box(Graphics& gfx, std::mt19937& rng,
 	// bind transform constant buffer ( TransformCBuf )
 	AddBind(std::make_unique<TransformCBuff>(gfx, *this));
 
-	struct PSMaterialConstant
-	{
-		alignas(16) dx::XMFLOAT3 color;
-		float specular_intensity = 0.6f;
-		float specular_power = 30.0f;
-		float padding[2];
-	}colorConst;
-	colorConst.color = Material;
+	materialConstants.color = Material;
 
-	AddBind( std::make_unique<PixelConstantBuffer<PSMaterialConstant>>(gfx, colorConst, 1u ));
+	AddBind( std::make_unique<MaterialCbuf>(gfx, materialConstants, 1u ));
 
 	dx::XMStoreFloat3x3(
 		&mt,
@@ -83,4 +77,44 @@ Box::Box(Graphics& gfx, std::mt19937& rng,
 DirectX::XMMATRIX Box::GetTransformXM() const noexcept
 {
 	return DirectX::XMLoadFloat3x3(&mt) * BaseObject::GetTransformXM();
+}
+
+bool Box::SpawnControlWindow(int id, Graphics& gfx) noexcept
+{
+	using namespace std::string_literals;
+
+	bool Changed = false;
+	bool open = true;
+	if( ImGui::Begin( ("Box "s + std::to_string(id)).c_str(),&open))
+	{
+		ImGui::Text( " Material Properties ");
+		const auto mc = ImGui::ColorEdit3( "Material Color",&materialConstants.color.x);
+		const auto si = ImGui::SliderFloat("Specular Intensity", &materialConstants.specular_intensity, 0.05f, 4.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
+		const auto sp = ImGui::SliderFloat("Specular Power", &materialConstants.specular_power, 1.0f, 200.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
+		Changed = mc || si || sp;
+
+		ImGui::Text("Position");
+		ImGui::SliderFloat("R", &r, 0.0f, 80.0f, "%.1f", ImGuiSliderFlags_Logarithmic);
+		ImGui::SliderAngle("Theta", &theta, -180.0f, 180.0f);
+		ImGui::SliderAngle("Phi", &phi, -180.0f, 180.0f);
+		ImGui::Text("Orientation");
+		ImGui::SliderAngle("Roll", &roll, -180.0f, 180.0f);
+		ImGui::SliderAngle("Pitch", &pitch, -180.0f, 180.0f);
+		ImGui::SliderAngle("Yaw", &yaw, -180.0f, 180.0f);
+	}
+	ImGui::End();
+
+	if ( Changed )
+	{
+		SyncMaterial( gfx );
+	}
+
+	return open;
+}
+
+void Box::SyncMaterial(Graphics& gfx) noexcept(!IS_DEBUG)
+{
+	auto pConstPS = QueryBindable<MaterialCbuf>();
+	assert( pConstPS != nullptr );
+	pConstPS->Update(gfx, materialConstants);
 }

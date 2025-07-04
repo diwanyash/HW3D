@@ -73,6 +73,15 @@ App::App()
 	drawable.reserve( nDrawables );
 	std::generate_n( std::back_inserter(drawable), nDrawables, factory );
 
+	for ( auto& pd : drawable)
+	{
+		if ( auto pb = dynamic_cast<Box*>(pd.get()) ) 
+		{
+			boxes.push_back(pb);
+		}
+	}
+
+
 	wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 1000.0f));
 }
 
@@ -129,18 +138,69 @@ void App::DoFrame()
 	}	
 	light.Draw( wnd.Gfx() );
 
-	static char Buffer[1024];
-	if (ImGui::Begin("Simulation of speed"))
-	{
- 		ImGui::SliderFloat("Speed Factor", &SpeedFactor, 0.0f, 5.0f, "%.4f", ImGuiSliderFlags_Logarithmic);
-		ImGui::Text("Appplication Average %.3f ms/frame (%.1f FPS)",1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		ImGui::Text("Press 'I' to Disable/Enable Imgui");
-	}
-
-	ImGui::End();
-
+	// ImGui Windows
+	SpawnSimulationWindows();
 	cam.SpawnControlWindow();
 	light.SpawnControlWindow();
-
+	SpawnBoxWindowManagerWindow();
+	SpawnBoxWindows();
 	wnd.Gfx().EndFrame();
+}
+
+void App::SpawnBoxWindowManagerWindow() noexcept
+{
+	if (ImGui::Begin("Boxes"))
+	{
+		using namespace std::string_literals;
+		const auto Preview = comboBoxIndex ? std::to_string(*comboBoxIndex) : "Choose a box..."s;
+
+		if (ImGui::BeginCombo("Box Number", Preview.c_str()))
+		{
+			for (int i = 0; i < boxes.size(); i++)
+			{
+				const bool selected = comboBoxIndex ? (*comboBoxIndex == i) : false;
+				if ( ImGui::Selectable( std::to_string( i ).c_str(), selected ) )
+				{
+					comboBoxIndex = i;
+				}
+				if (selected)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndCombo();
+		}
+		if (ImGui::Button("Spawn Control Window") && comboBoxIndex)
+		{
+			boxControlIds.insert(*comboBoxIndex);
+			comboBoxIndex.reset();
+		}
+	}
+	ImGui::End();
+}
+
+void App::SpawnBoxWindows() noexcept
+{
+	for (auto i = boxControlIds.begin(); i != boxControlIds.end();)
+	{
+		if ( !boxes[*i]->SpawnControlWindow(*i, wnd.Gfx()))
+		{
+			i = boxControlIds.erase(i);
+		}
+		else
+		{
+			i++;
+		}
+	}
+}
+
+void App::SpawnSimulationWindows() noexcept
+{
+	if (ImGui::Begin("Simulation of speed"))
+	{
+		ImGui::SliderFloat("Speed Factor", &SpeedFactor, 0.0f, 5.0f, "%.4f", ImGuiSliderFlags_Logarithmic);
+		ImGui::Text("Appplication Average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		ImGui::Text("Press 'I' to Disable/Enable Imgui");
+	}
+	ImGui::End();
 }

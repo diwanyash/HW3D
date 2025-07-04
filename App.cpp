@@ -10,6 +10,9 @@
 #include "GDIPlusManager.h"
 #include "SkinnedCube.h"
 #include "Cylinder.h"
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 GDIPlusManager gdi;
 
@@ -80,6 +83,11 @@ App::App()
 			boxes.push_back(pb);
 		}
 	}
+
+	Assimp::Importer imp;
+	auto model = imp.ReadFile("E:/chilli game dev/HW3D/model/suzanne.obj", 
+		aiProcess_JoinIdenticalVertices | 
+		aiProcess_Triangulate );
 
 
 	wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 1000.0f));

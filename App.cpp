@@ -11,7 +11,6 @@
 #include "GDIPlusManager.h"
 #include "SkinnedCube.h"
 #include "Cylinder.h"
-#include "VertexLayout.h"
 #include "AssImpTest.h"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>

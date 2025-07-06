@@ -3,6 +3,7 @@
 #include "Melon.h"
 #include "Pyramid.h"
 #include "Sheet.h"
+#include <DirectXMath.h>
 #include "Drawable.h"
 #include <memory>
 #include "imgui/imgui.h"
@@ -10,11 +11,13 @@
 #include "GDIPlusManager.h"
 #include "SkinnedCube.h"
 #include "Cylinder.h"
+#include "VertexLayout.h"
 #include "AssImpTest.h"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+namespace dx = DirectX;
 GDIPlusManager gdi;
 
 App::App()
@@ -31,8 +34,8 @@ App::App()
 		{}
 		std::unique_ptr<Drawable> operator()()
 		{
-			const DirectX::XMFLOAT3 mat = { cdist(rng),  cdist(rng),  cdist(rng), };
-			const DirectX::XMFLOAT3 mat2 = { 0.0f, 1.0f, 0.0f };
+			const dx::XMFLOAT3 mat = { cdist(rng),  cdist(rng),  cdist(rng), };
+			const dx::XMFLOAT3 mat2 = { 0.0f, 1.0f, 0.0f };
 
 			switch ( typedist( rng ) )
 			{
@@ -54,7 +57,7 @@ App::App()
 				break;
 			case 4:
 				return std::make_unique<AssImpTest>(
-					gfx, rng, adist, ddist, odist, rdist, mat, 2.0f);
+					gfx, rng, adist, ddist, odist, rdist, mat, 20.0f);
 				break;
 			//case 4:
 			//	return std::make_unique<Sheet>(
@@ -91,7 +94,7 @@ App::App()
 	}
 
 
-	wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 1000.0f));
+	wnd.Gfx().SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 1000.0f));
 }
 
 int App::Go()

@@ -3,9 +3,11 @@
 #include "BindableBase.h"
 #include "DirectXMath.h"
 #include "GraphicsThrowMacros.h"
+#include "Surface.h"
 #include <assimp/scene.h>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
+#include "IndexedTriangleList.h"
 
 AssImpTest::AssImpTest(Graphics& gfx, std::mt19937& rng, 
 	std::uniform_real_distribution<float>& adist, 
@@ -28,22 +30,29 @@ AssImpTest::AssImpTest(Graphics& gfx, std::mt19937& rng,
 			};
 
 			Assimp::Importer imp;
-			const auto model = imp.ReadFile("E:/chilli game dev/HW3D/model/suzanne.obj",
-				aiProcess_JoinIdenticalVertices);
+			const auto model = imp.ReadFile("E:/chilli game dev/HW3D/model/bunny.obj", 0);
+				//aiProcess_JoinIdenticalVertices);
 			
 			const auto pMesh = model->mMeshes[0];
 
 			std::vector<Vertex>vertices;
 			vertices.reserve(pMesh->mNumVertices);
+			//
+			// SOME FUN
+			// 
+
+			IndexedTriangleList<Vertex> normmodel;
+
+			//
 
 			for (unsigned int i = 0; i < pMesh->mNumVertices; i++)
 			{
 				vertices.push_back({
 					{ pMesh->mVertices[i].x * scale, pMesh->mVertices[i].y * scale, pMesh->mVertices[i].z * scale },
-					*reinterpret_cast<DirectX::XMFLOAT3*>(&pMesh->mNormals[i])
+					/**/DirectX::XMFLOAT3{ 0.0f,0.0f,0.0f }
 					});
 			}
-
+			/// *reinterpret_cast<DirectX::XMFLOAT3*>(&pMesh->mNormals[i]) add insted or norm or 0
 
 			std::vector<unsigned short> indices;
 			indices.reserve( pMesh->mNumFaces * 3);
@@ -56,6 +65,23 @@ AssImpTest::AssImpTest(Graphics& gfx, std::mt19937& rng,
 				indices.push_back( face.mIndices[1]);
 				indices.push_back( face.mIndices[2]);
 			}
+
+			/*
+			FUN CONTINUES
+			*/
+
+			normmodel.vertices = vertices;
+			normmodel.indices = indices;
+			
+			normmodel.SetNormalsIndependentFlat();
+
+			for( unsigned int i = 0; i < vertices.size(); i++)
+			{
+				vertices[i].n.x = normmodel.vertices[i].n.x;
+				vertices[i].n.y = normmodel.vertices[i].n.y;
+				vertices[i].n.z = normmodel.vertices[i].n.z;
+			}
+			/////////////
 
 			AddStaticBind(std::make_unique<VertexBuffer>(gfx, vertices));
 			AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx,indices));

@@ -245,6 +245,7 @@
     <ClInclude Include="Topology.h" />
     <ClInclude Include="TransformCBuff.h" />
     <ClInclude Include="VertexBuffer.h" />
+    <ClInclude Include="VertexLayout.h" />
     <ClInclude Include="VertexShader.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="WindowsMessageMap.h" />

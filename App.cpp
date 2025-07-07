@@ -56,7 +56,7 @@ App::App()
 				break;
 			case 4:
 				return std::make_unique<AssImpTest>(
-					gfx, rng, adist, ddist, odist, rdist, mat, 20.0f);
+					gfx, rng, adist, ddist, odist, rdist, mat, 2.0f);
 				break;
 			//case 4:
 			//	return std::make_unique<Sheet>(

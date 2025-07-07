@@ -54,6 +54,10 @@ public:
 	~Graphics();
 	void EndFrame();
 	void BeginFrame(float red, float green, float blue) noexcept;
+	void BeginFrame(float color[]) noexcept
+	{
+		BeginFrame( color[0], color[1], color[2] );
+	}
 	void DrawIndexed( UINT count );
 	void SetProjection( DirectX::FXMMATRIX proj )noexcept;
 	DirectX::XMMATRIX GetProjection() const noexcept;

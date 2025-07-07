@@ -24,6 +24,50 @@ namespace hw3dver {
 			Float3Color,
 			Float4Color,
 			BGRAColor,
+			Count,
+		};
+		template<ElementType> struct Map;
+		template<> struct Map<Position2D>
+		{
+			using SysType = DirectX::XMFLOAT2;
+			DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32_FLOAT;
+			const char* sementic = "Position";
+		};
+		template<> struct Map<Position3D>
+		{
+			using SysType = DirectX::XMFLOAT3;
+			DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
+			const char* sementic = "Position";
+		};
+		template<> struct Map<Texture2D>
+		{
+			using SysType = DirectX::XMFLOAT2;
+			DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32_FLOAT;
+			const char* sementic = "TexCoord";
+		};
+		template<> struct Map<Normal>
+		{
+			using SysType = DirectX::XMFLOAT3;
+			DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
+			const char* sementic = "Normal";
+		};
+		template<> struct Map<Float3Color>
+		{
+			using SysType = DirectX::XMFLOAT3;
+			DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
+			const char* sementic = "Color";
+		};
+		template<> struct Map<Float4Color>
+		{
+			using SysType = DirectX::XMFLOAT4;
+			DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32A32_FLOAT;
+			const char* sementic = "Color";
+		};
+		template<> struct Map<BGRAColor>
+		{
+			using SysType = hw3dver::BGRAColor;
+			DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+			const char* sementic = "Color";
 		};
 	public:
 		class Element
@@ -53,19 +97,19 @@ namespace hw3dver {
 				switch (type)
 				{
 				case Position2D:
-					return sizeof(XMFLOAT2);
+					return sizeof(Map<Position2D>::SysType);
 				case Position3D:
-					return sizeof(XMFLOAT3);
+					return sizeof(Map<Position3D>::SysType);
 				case Texture2D:
-					return sizeof(XMFLOAT2);
+					return sizeof(Map<Texture2D>::SysType);
 				case Normal:
-					return sizeof(XMFLOAT3);
+					return sizeof(Map<Normal>::SysType);
 				case Float3Color:
-					return sizeof(XMFLOAT3);
+					return sizeof(Map<Float3Color>::SysType);
 				case Float4Color:
-					return sizeof(XMFLOAT4);
+					return sizeof(Map<Float4Color>::SysType);
 				case BGRAColor:
-					return sizeof(::hw3dver::BGRAColor);
+					return sizeof(Map<BGRAColor>::SysType);
 				}
 				assert("Invalid element type" && false);
 				return 0u;
@@ -96,8 +140,7 @@ namespace hw3dver {
 		{
 			return elements[i];
 		}
-		template< ElementType Type >
-		VertexLayout& Append() noexcept(!IS_DEBUG)
+		VertexLayout& Append( ElementType Type ) noexcept(!IS_DEBUG)
 		{
 			elements.emplace_back(Type, Size());
 			return *this;
@@ -121,71 +164,36 @@ namespace hw3dver {
 		template< VertexLayout::ElementType Type >
 		auto& Attr() noexcept(!IS_DEBUG)
 		{
-			using namespace DirectX;
-			const auto& element = layout.Resolve<Type>();
-			auto pAttribute = pData + element.GetOffset();
-			if constexpr (Type == VertexLayout::Position2D)
-			{
-				return *reinterpret_cast<XMFLOAT2*>(pAttribute);
-			}
-			else if constexpr (Type == VertexLayout::Position3D)
-			{
-				return *reinterpret_cast<XMFLOAT3*>(pAttribute);
-			}
-			else if constexpr (Type == VertexLayout::Texture2D)
-			{
-				return *reinterpret_cast<XMFLOAT2*>(pAttribute);
-			}
-			else if constexpr (Type == VertexLayout::Normal)
-			{
-				return *reinterpret_cast<XMFLOAT3*>(pAttribute);
-			}
-			else if constexpr (Type == VertexLayout::Float3Color)
-			{
-				return *reinterpret_cast<XMFLOAT3*>(pAttribute);
-			}
-			else if constexpr (Type == VertexLayout::Float4Color)
-			{
-				return *reinterpret_cast<XMFLOAT4*>(pAttribute);
-			}
-			else if constexpr (Type == VertexLayout::BGRAColor)
-			{
-				return *reinterpret_cast<BGRAColor*>(pAttribute);
-			}
-			else
-			{
-				assert("Bad Element Type" && false);
-				return *reinterpret_cast<char*>(pAttribute);
-			}
+			auto pAttribute = pData + layout.Resolve<Type>().GetOffset();
+			return *reinterpret_cast<typename VertexLayout::Map<Type>::SysType*>( pAttribute );
 		}
 		template<typename T>
 		void SetAttributeByIndex(size_t i, T&& val) noexcept(!IS_DEBUG)
 		{
-			using namespace DirectX;
 			const auto& element = layout.ResolveByIndex(i);
 			auto pAttribute = pData + element.GetOffset();
 			switch (element.GetType())
 			{
 			case VertexLayout::Position2D:
-				SetAttribute<XMFLOAT2>(pAttribute, std::forward<T>(val));
+				SetAttribute<VertexLayout::Position2D>(pAttribute, std::forward<T>(val));
 				break;
 			case VertexLayout::Position3D:
-				SetAttribute<XMFLOAT3>(pAttribute, std::forward<T>(val));
+				SetAttribute<VertexLayout::Position3D>(pAttribute, std::forward<T>(val));
 				break;
 			case VertexLayout::Texture2D:
-				SetAttribute<XMFLOAT2>(pAttribute, std::forward<T>(val));
+				SetAttribute<VertexLayout::Texture2D>(pAttribute, std::forward<T>(val));
 				break;
 			case VertexLayout::Normal:
-				SetAttribute<XMFLOAT3>(pAttribute, std::forward<T>(val));
+				SetAttribute<VertexLayout::Normal>(pAttribute, std::forward<T>(val));
 				break;
 			case VertexLayout::Float3Color:
-				SetAttribute<XMFLOAT3>(pAttribute, std::forward<T>(val));
+				SetAttribute<VertexLayout::Float3Color>(pAttribute, std::forward<T>(val));
 				break;
 			case VertexLayout::Float4Color:
-				SetAttribute<XMFLOAT4>(pAttribute, std::forward<T>(val));
+				SetAttribute<VertexLayout::Float4Color>(pAttribute, std::forward<T>(val));
 				break;
 			case VertexLayout::BGRAColor:
-				SetAttribute<BGRAColor>(pAttribute, std::forward<T>(val));
+				SetAttribute<VertexLayout::BGRAColor>(pAttribute, std::forward<T>(val));
 				break;
 			default:
 				assert("bad element type" && false);
@@ -206,16 +214,17 @@ namespace hw3dver {
 			SetAttributeByIndex(i, std::forward<First>(first));
 			SetAttributeByIndex(i + 1, std::forward<Rest>(rest)...);
 		}
-		template<typename Dest, typename Src>
-		void SetAttribute(char* pAttribute, Src&& val) noexcept(!IS_DEBUG)
+		template<VertexLayout::ElementType DestLayoutType,typename SrcType>
+		void SetAttribute( char* pAttribute,SrcType&& val ) noexcept(!IS_DEBUG)
 		{
-			if constexpr (std::is_assignable<Dest, Src>::value)
+			using Dest = typename VertexLayout::Map<DestLayoutType>::SysType;
+			if constexpr( std::is_assignable<Dest,SrcType>::value )
 			{
 				*reinterpret_cast<Dest*>(pAttribute) = val;
 			}
 			else
 			{
-				assert("parameter attribute type mismatch" && false);
+				assert( "Parameter attribute type mismatch" && false );
 			}
 		}
 	private:

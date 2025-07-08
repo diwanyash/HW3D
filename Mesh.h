@@ -22,7 +22,7 @@ class Node
 public:
 	Node(const std::string& name ,std::vector<Mesh*> meshPtrs, const DirectX::XMMATRIX& transform) noexcept(!IS_DEBUG);
 	void Draw(Graphics& gfx, DirectX::FXMMATRIX accumulatedTransform) const noexcept(!IS_DEBUG);
-	void RenderTree() noexcept;
+	void ShowTree() const noexcept;
 private:
 	void AddChild(std::unique_ptr<Node> pChild) noexcept(!IS_DEBUG);
 private:
@@ -41,16 +41,9 @@ public:
 	void Draw(Graphics& gfx) const noxnd;
 	void ShowWindow( const char* WindowName ) noexcept;
 	void Reset() noexcept;
+	~Model() noexcept;
 private:
-	struct
-	{
-		float roll =	0.0f;
-		float pitch =	0.0f;
-		float yaw =		0.0f;
-		float x =		0.0f;
-		float y =		0.0f;
-		float z =		0.0f;
-	}pos;
+	std::unique_ptr<class ModelWindow> pWindow;
 	std::unique_ptr<Node> pRoot;
-	std::vector< std::unique_ptr<Mesh>> MeshPtrs;
+	std::vector<std::unique_ptr<Mesh>> MeshPtrs;
 };

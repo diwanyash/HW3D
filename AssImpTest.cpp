@@ -23,8 +23,8 @@ AssImpTest::AssImpTest(Graphics& gfx, std::mt19937& rng,
 	if (!IsStaticInitialized())
 	{
 
-		using hw3dver::VertexLayout;
-		hw3dver::VertexBuffer vbuf(std::move(
+		using Dvtx::VertexLayout;
+		Dvtx::VertexBuffer vbuf(std::move(
 			VertexLayout{}
 			.Append(VertexLayout::Position3D)
 			.Append(VertexLayout::Normal)

@@ -25,7 +25,7 @@ public:
 		sd.pSysMem = vertices.data();
 		GFX_THROW_INFO(GetDevice(gfx)->CreateBuffer(&bd, &sd, &pVertexBuffer));
 	}
-	VertexBuffer(Graphics& gfx, const hw3dver::VertexBuffer& vbuf)
+	VertexBuffer(Graphics& gfx, const Dvtx::VertexBuffer& vbuf)
 		:
 		stride( (UINT)vbuf.GetLayout().Size() )
 	{

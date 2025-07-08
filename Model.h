@@ -95,9 +95,9 @@ public:
 	}
 	static std::unique_ptr<Mesh> ParseMesh(Graphics& gfx, const aiMesh& mesh)
 	{
-		using hw3dver::VertexLayout;
+		using Dvtx::VertexLayout;
 
-		hw3dver::VertexBuffer vbuf(std::move(
+		Dvtx::VertexBuffer vbuf(std::move(
 			VertexLayout{}
 			.Append(VertexLayout::Position3D)
 			.Append(VertexLayout::Normal)

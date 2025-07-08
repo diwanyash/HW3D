@@ -8,9 +8,9 @@
 class Mesh : public DrawableBase<Mesh>
 {
 public:
-	Mesh( Graphics& gfx, std::vector< std::unique_ptr<Bindable>> bindablePtr )
+	Mesh( Graphics& gfx, std::vector<std::unique_ptr<Bindable>> bindablePtr )
 	{
-		if ( !IsStaticInitialized )
+		if (!IsStaticInitialized())
 		{
 			AddStaticBind( std::make_unique<Topology>( gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST) );
 		}
@@ -27,6 +27,7 @@ public:
 				AddBind( std::move( pb ) );
 			}
 		}
+		AddBind( std::make_unique<TransformCBuff>( gfx,*this )  );
 	}
 	void Draw(Graphics& gfx, DirectX::FXMMATRIX accumulatedTransform) const noexcept
 	{
@@ -78,7 +79,7 @@ private:
 class Model
 {
 public:
-	Model(Graphics& gfx, std::string& filename) noexcept(!IS_DEBUG)
+	Model(Graphics& gfx, std::string filename) noexcept(!IS_DEBUG)
 	{
 		Assimp::Importer imp;
 		const auto pScene = imp.ReadFile(filename.c_str(),
@@ -168,9 +169,9 @@ public:
 
 		return pNode;
 	}
-	void Draw(Graphics& gfx) const
+	void Draw(Graphics& gfx, DirectX::FXMMATRIX transform = DirectX::XMMatrixIdentity()) const
 	{
-		pRoot->Draw( gfx, DirectX::XMMatrixIdentity() );
+		pRoot->Draw( gfx, transform );
 	}
 private:
 	std::unique_ptr<Node> pRoot;

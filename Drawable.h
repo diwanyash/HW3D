@@ -14,7 +14,8 @@ public:
 	Drawable() = default;
 	Drawable( const Drawable& ) = delete;
 	virtual ~Drawable() = default;
-	virtual void Update( float dt )noexcept = 0;
+	virtual void Update(float dt)noexcept
+	{}
 	virtual DirectX::XMMATRIX GetTransformXM() const noexcept = 0;
 	void Draw(Graphics& gfx) const noexcept(!IS_DEBUG);
 protected:

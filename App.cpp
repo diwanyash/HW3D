@@ -59,11 +59,15 @@ void App::DoFrame()
 		}
 		wnd.kbd.Flush();
 	}
-	
+
+	const auto transform = dx::XMMatrixRotationRollPitchYaw( pos.roll, pos.pitch, pos.yaw ) *
+		dx::XMMatrixTranslation( pos.x, pos.y - 10.0f, pos.z + 6.0f);
+	nano.Draw( wnd.Gfx(), transform );
 	light.Draw( wnd.Gfx() );
 
 	// ImGui Windows
 	SpawnSimulationWindows();
+	SpawnModelWindow();
 	cam.SpawnControlWindow();
 	light.SpawnControlWindow();
 	wnd.Gfx().EndFrame();
@@ -85,6 +89,34 @@ void App::SpawnSimulationWindows() noexcept
 			cam.Reset();
 			light.Reset();
 			SpeedFactor = 0.4f;
+		}
+	}
+	ImGui::End();
+}
+
+void App::SpawnModelWindow()
+{
+	if (ImGui::Begin("Model"))
+	{
+		ImGui::Text("Position");
+		ImGui::SliderFloat( "X", &pos.x, -20.0f, 20.0f );
+		ImGui::SliderFloat( "Y", &pos.y, -20.0f, 20.0f );
+		ImGui::SliderFloat( "Z", &pos.z, -20.0f, 20.0f );
+
+		ImGui::Text("Orientation");
+		ImGui::SliderAngle( "Roll", &pos.roll, -180.0f, 180.0f );
+		ImGui::SliderAngle( "Pitch", &pos.pitch, -180.0f, 180.0f );
+		ImGui::SliderAngle( "Yaw", &pos.yaw, -180.0f, 180.0f );
+		
+		
+		if (ImGui::Button("Reset"))
+		{
+			pos.roll = 0.0f;
+			pos.pitch = 0.0f;
+			pos.yaw = 0.0f;
+			pos.x = 0.0f;
+			pos.y = 0.0f;
+			pos.z = 0.0f;
 		}
 	}
 	ImGui::End();

@@ -29,8 +29,8 @@ int CALLBACK WinMain(
 	{
 		MessageBox(nullptr,"No Details Available","Unknown Exception", MB_OK | MB_ICONEXCLAMATION);
 	}
+	return 0;
 }
-
 
 
 

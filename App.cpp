@@ -89,6 +89,14 @@ void App::SpawnSimulationWindows() noexcept
 			cam.Reset();
 			light.Reset();
 			SpeedFactor = 0.4f;
+			{
+				pos.roll = 0.0f;
+				pos.pitch = 0.0f;
+				pos.yaw = 0.0f;
+				pos.x = 0.0f;
+				pos.y = 0.0f;
+				pos.z = 0.0f;
+			}
 		}
 	}
 	ImGui::End();

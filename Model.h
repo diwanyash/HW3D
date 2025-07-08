@@ -91,6 +91,7 @@ public:
 			MeshPtrs.push_back( ParseMesh( gfx, *pScene->mMeshes[i] ));
 		}
 		pRoot = ParseNode( *pScene->mRootNode );
+
 	}
 	static std::unique_ptr<Mesh> ParseMesh(Graphics& gfx, const aiMesh& mesh)
 	{

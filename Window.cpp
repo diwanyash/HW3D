@@ -151,6 +151,11 @@ void Window::DisableCursor()
 	ConfineCursor();
 }
 
+bool Window::IsCursorEnabled() const noexcept
+{
+	return CursorEnabled;
+}
+
 void Window::HideCursor()
 {
 	while ( ::ShowCursor( FALSE ) >= 0 );
@@ -370,6 +375,10 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 		/****************** Raw Mouse Input Start *******************/
 		case WM_INPUT:
 		{
+			if ( !mouse.RawEnabled() )
+			{
+				break;
+			}
 			UINT size;
 			if (GetRawInputData(
 				reinterpret_cast<HRAWINPUT>(lParam),

@@ -56,6 +56,7 @@ public:
 	Graphics& Gfx();
 	void EnableCursor();
 	void DisableCursor();
+	bool IsCursorEnabled() const noexcept;
 private:
 	void ShowCursor();
 	void HideCursor();

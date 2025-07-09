@@ -67,9 +67,25 @@ void App::DoFrame()
 	// ImGui Windows
 	SpawnSimulationWindows();
 	nano.ShowWindow("NanoSuit");
+	ShowRawInputWindow();
 	cam.SpawnControlWindow();
 	light.SpawnControlWindow();
 	wnd.Gfx().EndFrame();
+}
+
+void App::ShowRawInputWindow()
+{
+	while ( const auto d = wnd.mouse.ReadRawDelta() )
+	{
+		x += d->x;
+		y += d->y;
+	}
+	if ( ImGui::Begin( "Raw Input" ))
+	{
+		ImGui::SetWindowSize(ImVec2(100, 50));
+		ImGui::Text( "Tally (%d, %d)",x, y);
+	}
+	ImGui::End();
 }
 
 void App::SpawnSimulationWindows() noexcept

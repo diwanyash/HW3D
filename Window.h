@@ -74,6 +74,7 @@ private:
 	int width;
 	int height;
 	HWND hWnd;
+	std::vector<char> rawBuffer;
 	std::unique_ptr<Graphics> pGfx;
 };
 

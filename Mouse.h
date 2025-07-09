@@ -1,10 +1,15 @@
 #pragma once
 #include <utility>
 #include <queue>
+#include <optional>
 
 class Mouse {
 	friend class Window;
 public:
+	struct RawDelta
+	{
+		int x, y;
+	};
 	class Event {
 	public:
 		enum class Type
@@ -77,6 +82,7 @@ public:
 	Mouse (const Mouse&) = delete;
 	Mouse& operator=(const Mouse&) = delete;
 	std::pair<int, int> GetPos() const noexcept;
+	std::optional<RawDelta> ReadRawDelta() noexcept;
 	int GetPosX() const noexcept; 
 	int GetPosY() const noexcept;
 	bool IsEmpty() const noexcept
@@ -96,10 +102,12 @@ private:
 	void OnRightReleased(int x, int y) noexcept;
 	void OnMouseLeave() noexcept;
 	void OnMouseEnter() noexcept;
+	void OnRawDelta( int dx, int dy ) noexcept;
 	void OnWheelUp(int x, int y) noexcept;
 	void OnWheelDown(int x, int y) noexcept;
 	void OnWheelDelta(int x,int y,int delta) noexcept;
 	void TrimBuffer() noexcept;
+	void TrimRawInputBuffer() noexcept;
 private:
 	static constexpr unsigned char bufferSize = 16u;
 	int x = 0;
@@ -109,4 +117,5 @@ private:
 	bool isInWindow = false;
 	int WheelDeltaCarry = 0;
 	std::queue<Event> buffer;
+	std::queue<RawDelta> rawDeltaBuffer;
 };

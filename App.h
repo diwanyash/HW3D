@@ -14,10 +14,12 @@ public:
 	~App();
 private:
 	void DoFrame();
+	void ShowRawInputWindow();
 private: 
 	ImguiManager imgui;
 	Window wnd;
 	FrameTimer ft;
+	int x = 0, y = 0;
 	void SpawnSimulationWindows() noexcept;
 	float SpeedFactor = 0.4f;
 	float color[3] = {0.0f,0.0f,0.07f};

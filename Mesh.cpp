@@ -1,5 +1,6 @@
 #include "Mesh.h"
 #include "imgui/imgui.h"
+#include <unordered_map>
 
 namespace dx = DirectX;
 
@@ -41,12 +42,16 @@ Node::Node(const std::string& name,std::vector<Mesh*> meshPtrs, const DirectX::X
 	name( name ),
 	meshPtrs( std::move(meshPtrs) )
 {
-	DirectX::XMStoreFloat4x4(&this->transform, transform);
+	dx::XMStoreFloat4x4(&baseTransform, transform);
+	dx::XMStoreFloat4x4(&appliedTransform, dx::XMMatrixIdentity());
 }
 
 void Node::Draw(Graphics& gfx, DirectX::FXMMATRIX accumulatedTransform) const noexcept(!IS_DEBUG)
 {
-	const auto built = DirectX::XMLoadFloat4x4(&transform) * accumulatedTransform;
+	const auto built = 
+		dx::XMLoadFloat4x4(&baseTransform) *
+		dx::XMLoadFloat4x4(&appliedTransform) *
+		accumulatedTransform;
 	for (auto pm : meshPtrs)
 	{
 		pm->Draw(gfx, built);
@@ -57,13 +62,30 @@ void Node::Draw(Graphics& gfx, DirectX::FXMMATRIX accumulatedTransform) const no
 	}
 }
 
-void Node::ShowTree() const noexcept
+void Node::SetAppliedTransform(DirectX::FXMMATRIX transform) noexcept
 {
-	if ( ImGui::TreeNode( name.c_str() ) )
+	dx::XMStoreFloat4x4( &appliedTransform, transform );
+}
+
+void Node::ShowTree( int& nodeIndexTracked, std::optional<int>& selectedIndex, Node*& pSelectedNode) const noexcept
+{
+	const int curNodeIndex = nodeIndexTracked;
+	nodeIndexTracked++;
+	const auto node_flags = ImGuiTreeNodeFlags_OpenOnArrow
+		| (( curNodeIndex == selectedIndex.value_or( -1 )) ? ImGuiTreeNodeFlags_Selected : 0 )
+		| (( childPtrs.empty() ) ? ImGuiTreeNodeFlags_Leaf : 0 );
+
+	if ( ImGui::TreeNodeEx( (void*)(intptr_t)curNodeIndex, node_flags, name.c_str() ) )
 	{
+		if (ImGui::IsItemClicked())
+		{
+			selectedIndex = curNodeIndex;
+			pSelectedNode = const_cast<Node*>(this);
+		}
+
 		for (const auto& pchild : childPtrs)
 		{
-			pchild->ShowTree();
+			pchild->ShowTree(nodeIndexTracked, selectedIndex, pSelectedNode );
 		}
 		ImGui::TreePop();
 	}
@@ -77,50 +99,64 @@ public:
 	{
 		WindowName = WindowName ? WindowName : "Model";
 
+		int nodeIndexTracked = 0;
 		if (ImGui::Begin(WindowName))
 		{
 			ImGui::Columns(2, nullptr, true);
-			root.ShowTree();
+			root.ShowTree( nodeIndexTracked, selectedIndex, pSelectedNode );
 
-			ImGui::NextColumn();
-			ImGui::Text("Orientation");
-			ImGui::SliderAngle("Roll", &pos.roll, -180.0f, 180.0f);
-			ImGui::SliderAngle("Pitch", &pos.pitch, -180.0f, 180.0f);
-			ImGui::SliderAngle("Yaw", &pos.yaw, -180.0f, 180.0f);
-
-			ImGui::Text("Position");
-			ImGui::SliderFloat("X", &pos.x, -20.0f, 20.0f);
-			ImGui::SliderFloat("Y", &pos.y, -20.0f, 20.0f);
-			ImGui::SliderFloat("Z", &pos.z, -20.0f, 20.0f);
-
-			if (ImGui::Button("Reset"))
+			ImGui::NextColumn(); 
+			if( pSelectedNode != nullptr )
 			{
-				pos.roll = 0.0f;
-				pos.pitch = 0.0f;
-				pos.yaw = 0.0f;
-				pos.x = 0.0f;
-				pos.y = 0.0f;
-				pos.z = 0.0f;
+				auto& transform = transforms[*selectedIndex ];
+				ImGui::Text("Orientation");
+				ImGui::SliderAngle("Roll", &transform.roll, -180.0f, 180.0f);
+				ImGui::SliderAngle("Pitch", &transform.pitch, -180.0f, 180.0f);
+				ImGui::SliderAngle("Yaw", &transform.yaw, -180.0f, 180.0f);
+
+				ImGui::Text("Position");
+				ImGui::SliderFloat("X", &transform.x, -20.0f, 20.0f);
+				ImGui::SliderFloat("Y", &transform.y, -20.0f, 20.0f);
+				ImGui::SliderFloat("Z", &transform.z, -20.0f, 20.0f);
+
+				if (ImGui::Button("Reset"))
+				{
+					transform.roll = 0.0f;
+					transform.pitch = 0.0f;
+					transform.yaw = 0.0f;
+					transform.x = 0.0f;
+					transform.y = 0.0f;
+					transform.z = 0.0f;
+				}
 			}
 		}
 		ImGui::End();
 	}
 	dx::XMMATRIX GetTransform() const noexcept
 	{
-		return DirectX::XMMatrixRotationRollPitchYaw(pos.roll, pos.pitch, pos.yaw) *
-			DirectX::XMMatrixTranslation(pos.x, pos.y - 10.0f, pos.z + 6.0f);
+		const auto& transform = transforms.at(*selectedIndex);
+
+		return DirectX::XMMatrixRotationRollPitchYaw(transform.roll, transform.pitch, transform.yaw) *
+			DirectX::XMMatrixTranslation(transform.x, transform.y, transform.z);
 	}
 	void Reset() noexcept
 	{
-		pos.roll = 0.0f;
-		pos.pitch = 0.0f;
-		pos.yaw = 0.0f;
-		pos.x = 0.0f;
-		pos.y = 0.0f;
-		pos.z = 0.0f;
+		auto& transform = transforms.at( *selectedIndex );
+		transform.roll = 0.0f;
+		transform.pitch = 0.0f;
+		transform.yaw = 0.0f;
+		transform.x = 0.0f;
+		transform.y = 0.0f;
+		transform.z = 0.0f;
+	}
+	Node* GetSelectedNode() const noexcept
+	{
+		return pSelectedNode;
 	}
 private:
-	struct
+	std::optional<int> selectedIndex;
+	Node* pSelectedNode;
+	struct TransformParameters
 	{
 		float roll = 0.0f;
 		float pitch = 0.0f;
@@ -128,7 +164,8 @@ private:
 		float x = 0.0f;
 		float y = 0.0f;
 		float z = 0.0f;
-	}pos;
+	};
+	std::unordered_map<int, TransformParameters> transforms;
 };
 
 void Node::AddChild(std::unique_ptr<Node> pChild) noexcept(!IS_DEBUG)
@@ -154,7 +191,7 @@ Model::Model(Graphics& gfx, std::string filename) noexcept(!IS_DEBUG)
 
 }
 
-std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, const aiMesh& mesh)
+std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, aiMesh& mesh)
 {
 	using Dvtx::VertexLayout;
 
@@ -166,6 +203,10 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, const aiMesh& mesh)
 
 	for (unsigned int i = 0; i < mesh.mNumVertices; i++)
 	{
+			mesh.mVertices[i].x = mesh.mVertices[i].x * scaler;
+			mesh.mVertices[i].y = mesh.mVertices[i].y * scaler;
+			mesh.mVertices[i].z = mesh.mVertices[i].z * scaler;
+
 		vbuf.EmplaceBack(
 			*reinterpret_cast<DirectX::XMFLOAT3*>(&mesh.mVertices[i]),
 			*reinterpret_cast<DirectX::XMFLOAT3*>(&mesh.mNormals[i])
@@ -248,7 +289,11 @@ Model::~Model() noexcept
 
 void Model::Draw(Graphics& gfx) const noxnd
 {
-	pRoot->Node::Draw(gfx, pWindow->GetTransform());
+	if (auto node = pWindow->GetSelectedNode())
+	{
+		node->SetAppliedTransform( pWindow->GetTransform() );
+	}
+	pRoot->Node::Draw(gfx, dx::XMMatrixIdentity() );
 }
 
 

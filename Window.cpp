@@ -131,17 +131,29 @@ void Window::EnableCursor()
 {
 	CursorEnabled = true;
 	ShowCursor();
+	EnableImGuiMouse();
 }
 
 void Window::DisableCursor()
 {
 	CursorEnabled = false;
 	HideCursor();
+	DisableImGuiMouse();
 }
 
 void Window::HideCursor()
 {
 	while ( ::ShowCursor( FALSE ) >= 0 );
+}
+
+void Window::EnableImGuiMouse()
+{
+	ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
+}
+
+void Window::DisableImGuiMouse()
+{
+	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouse;
 }
 
 void Window::ShowCursor()

@@ -61,6 +61,8 @@ private:
 	void HideCursor();
 	void EnableImGuiMouse();
 	void DisableImGuiMouse();
+	void ConfineCursor();
+	void FreeCursor();
 	static LRESULT CALLBACK HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 	static LRESULT CALLBACK HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 	LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;

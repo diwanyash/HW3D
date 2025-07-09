@@ -132,6 +132,7 @@ void Window::EnableCursor()
 	CursorEnabled = true;
 	ShowCursor();
 	EnableImGuiMouse();
+	FreeCursor();
 }
 
 void Window::DisableCursor()
@@ -139,6 +140,7 @@ void Window::DisableCursor()
 	CursorEnabled = false;
 	HideCursor();
 	DisableImGuiMouse();
+	ConfineCursor();
 }
 
 void Window::HideCursor()
@@ -154,6 +156,19 @@ void Window::EnableImGuiMouse()
 void Window::DisableImGuiMouse()
 {
 	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouse;
+}
+
+void Window::ConfineCursor()
+{
+	RECT rect;
+	GetClientRect( hWnd, &rect);
+	MapWindowPoints(hWnd, nullptr, reinterpret_cast<POINT*>(&rect), 2);
+	ClipCursor( &rect );
+}
+
+void Window::FreeCursor()
+{
+	ClipCursor( nullptr );
 }
 
 void Window::ShowCursor()
@@ -205,6 +220,22 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 			/**************** Keypress Messages Start ****************/
 		case WM_KILLFOCUS:
 			kbd.ClearState();
+			break;
+			/****************** Mouse Confined Or Not **************/
+		case WM_ACTIVATE:
+			if ( !CursorEnabled )
+			{
+				if ( wParam & WM_ACTIVATE )
+				{
+					ConfineCursor();
+					HideCursor();
+				}
+				else
+				{
+					FreeCursor();
+					ShowCursor();
+				}
+			}
 			break;
 			// check for system key
 		case WM_SYSKEYDOWN:
@@ -271,6 +302,12 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 		}
 		case WM_LBUTTONDOWN:
 		{
+			SetForegroundWindow( hWnd );
+			if ( !CursorEnabled )
+			{
+				ConfineCursor();
+				HideCursor();
+			}
 			if (imio.WantCaptureMouse)
 			{
 				break;

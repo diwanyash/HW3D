@@ -127,6 +127,28 @@ Graphics& Window::Gfx()
 	return *pGfx;
 }
 
+void Window::EnableCursor()
+{
+	CursorEnabled = true;
+	ShowCursor();
+}
+
+void Window::DisableCursor()
+{
+	CursorEnabled = false;
+	HideCursor();
+}
+
+void Window::HideCursor()
+{
+	while ( ::ShowCursor( FALSE ) >= 0 );
+}
+
+void Window::ShowCursor()
+{
+	while ( ::ShowCursor( TRUE ) < 0 );
+}
+
 LRESULT CALLBACK Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
 	if (msg == WM_NCCREATE)
@@ -344,7 +366,6 @@ std::string Window::HrException::GetErrorDescription() const noexcept
 {
 	return Exception::TranslateErrorCode(hr);
 }
-
 
 const char* Window::NoGfxException::GetType() const noexcept
 {

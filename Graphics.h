@@ -48,7 +48,7 @@ public:
 		std::string reason;
 	};
 public:
-	Graphics( HWND hwnd );
+	Graphics( HWND hwnd, int width, int height);
 	Graphics(const Graphics&) = delete;
 	Graphics& operator=(const Graphics&) = delete;
 	~Graphics();

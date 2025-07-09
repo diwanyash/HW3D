@@ -37,20 +37,20 @@ DirectX::XMMATRIX Mesh::GetTransformXM() const noexcept
 	return DirectX::XMLoadFloat4x4(&transform);
 }
 
-Node::Node(const std::string& name,std::vector<Mesh*> meshPtrs, const DirectX::XMMATRIX& transform) noexcept(!IS_DEBUG)
+Node::Node(const std::string& name,std::vector<Mesh*> meshPtrs, const DirectX::XMMATRIX& transform_in) noexcept(!IS_DEBUG)
 	:
 	name( name ),
 	meshPtrs( std::move(meshPtrs) )
 {
-	dx::XMStoreFloat4x4(&baseTransform, transform);
+	dx::XMStoreFloat4x4(&transform, transform_in);
 	dx::XMStoreFloat4x4(&appliedTransform, dx::XMMatrixIdentity());
 }
 
 void Node::Draw(Graphics& gfx, DirectX::FXMMATRIX accumulatedTransform) const noexcept(!IS_DEBUG)
 {
 	const auto built = 
-		dx::XMLoadFloat4x4(&baseTransform) *
 		dx::XMLoadFloat4x4(&appliedTransform) *
+		dx::XMLoadFloat4x4(&transform) *
 		accumulatedTransform;
 	for (auto pm : meshPtrs)
 	{
@@ -67,25 +67,27 @@ void Node::SetAppliedTransform(DirectX::FXMMATRIX transform) noexcept
 	dx::XMStoreFloat4x4( &appliedTransform, transform );
 }
 
-void Node::ShowTree( int& nodeIndexTracked, std::optional<int>& selectedIndex, Node*& pSelectedNode) const noexcept
+void Node::ShowTree(int& nodeIndexTracked, std::optional<int>& selectedIndex, Node*& pSelectedNode) const noexcept
 {
 	const int curNodeIndex = nodeIndexTracked;
 	nodeIndexTracked++;
 	const auto node_flags = ImGuiTreeNodeFlags_OpenOnArrow
-		| (( curNodeIndex == selectedIndex.value_or( -1 )) ? ImGuiTreeNodeFlags_Selected : 0 )
-		| (( childPtrs.empty() ) ? ImGuiTreeNodeFlags_Leaf : 0 );
+		| ((curNodeIndex == selectedIndex.value_or(-1)) ? ImGuiTreeNodeFlags_Selected : 0)
+		| ((childPtrs.empty()) ? ImGuiTreeNodeFlags_Leaf : 0);
 
-	if ( ImGui::TreeNodeEx( (void*)(intptr_t)curNodeIndex, node_flags, name.c_str() ) )
+	const auto extended = ImGui::TreeNodeEx((void*)(intptr_t)curNodeIndex, node_flags, name.c_str());
+
+	if (ImGui::IsItemClicked())
 	{
-		if (ImGui::IsItemClicked())
-		{
-			selectedIndex = curNodeIndex;
-			pSelectedNode = const_cast<Node*>(this);
-		}
+		selectedIndex = curNodeIndex;
+		pSelectedNode = const_cast<Node*>(this);
+	}
 
+	if (extended)
+	{
 		for (const auto& pchild : childPtrs)
 		{
-			pchild->ShowTree(nodeIndexTracked, selectedIndex, pSelectedNode );
+			pchild->ShowTree(nodeIndexTracked, selectedIndex, pSelectedNode);
 		}
 		ImGui::TreePop();
 	}
@@ -181,7 +183,9 @@ Model::Model(Graphics& gfx, std::string filename) noexcept(!IS_DEBUG)
 	Assimp::Importer imp;
 	const auto pScene = imp.ReadFile(filename.c_str(),
 		aiProcess_Triangulate |
-		aiProcess_JoinIdenticalVertices);
+		aiProcess_JoinIdenticalVertices |
+		aiProcess_ConvertToLeftHanded |
+		aiProcess_GenNormals);
 
 	for (size_t i = 0; i < pScene->mNumMeshes; i++)
 	{

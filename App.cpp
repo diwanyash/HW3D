@@ -13,10 +13,10 @@ GDIPlusManager gdi;
 
 App::App()
 	:
-	wnd(800, 600, "happy window"),
+	wnd(1280, 720, "happy window"),
 	light( wnd.Gfx(), 0.5f)
 {
-	wnd.Gfx().SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 1000.0f));
+	wnd.Gfx().SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 1000.0f));
 }
 
 int App::Go()

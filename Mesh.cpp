@@ -1,6 +1,9 @@
 #include "Mesh.h"
 #include "imgui/imgui.h"
+#include "Surface.h"
+#include "Texture.h"
 #include <unordered_map>
+#include "Sampler.h"
 
 namespace dx = DirectX;
 
@@ -210,9 +213,8 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, aiMesh& mesh, const aiMate
 		VertexLayout{}
 		.Append(VertexLayout::Position3D)
 		.Append(VertexLayout::Normal)
+		.Append(VertexLayout::Texture2D)
 	));
-
-	const auto& material = *pMaterials[mesh.mMaterialIndex];
 
 	for (unsigned int i = 0; i < mesh.mNumVertices; i++)
 	{
@@ -222,7 +224,8 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, aiMesh& mesh, const aiMate
 
 		vbuf.EmplaceBack(
 			*reinterpret_cast<DirectX::XMFLOAT3*>(&mesh.mVertices[i]),
-			*reinterpret_cast<DirectX::XMFLOAT3*>(&mesh.mNormals[i])
+			*reinterpret_cast<DirectX::XMFLOAT3*>(&mesh.mNormals[i]),
+			*reinterpret_cast<DirectX::XMFLOAT2*>(&mesh.mTextureCoords[0][i])
 		);
 	}
 
@@ -240,14 +243,24 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, aiMesh& mesh, const aiMate
 
 	std::vector< std::unique_ptr<Bindable>> bindablePtrs;
 
+	if ( mesh.mMaterialIndex >= 0 )
+	{
+		using namespace std::string_literals;
+		auto& material = *pMaterials[ mesh.mMaterialIndex ];
+		aiString texFileName;
+		material.GetTexture( aiTextureType_DIFFUSE, 0, &texFileName );
+		bindablePtrs.push_back( std::make_unique<Texture>( gfx, Surface::FromFile( "E:/chilli game dev/HW3D/model/nano_textured/"s + texFileName.C_Str() )));
+		bindablePtrs.push_back( std::make_unique<Sampler>( gfx ) );
+	}
+
 	bindablePtrs.push_back(std::make_unique<VertexBuffer>(gfx, vbuf));
 	bindablePtrs.push_back(std::make_unique<IndexBuffer>(gfx, indices));
 
-	auto pvs = std::make_unique<VertexShader>(gfx, L"Shaderm\\PhongVS.cso");
+	auto pvs = std::make_unique<VertexShader>(gfx, L"Shaderm\\TexturedPhongVS.cso");
 	auto pvsbc = pvs->GetByteCode();
 	bindablePtrs.push_back(std::move(pvs));
 
-	bindablePtrs.push_back(std::make_unique<PixelShader>(gfx, L"Shaderm\\PhongPS.cso"));
+	bindablePtrs.push_back(std::make_unique<PixelShader>(gfx, L"Shaderm\\TexturedPhongPS.cso"));
 	bindablePtrs.push_back(std::make_unique<InputLayout>(gfx, vbuf.GetLayout().GetD3DLayout(), pvsbc));
 
 	struct PSMaterialConstant

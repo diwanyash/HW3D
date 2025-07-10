@@ -24,7 +24,7 @@ private:
 	float SpeedFactor = 1.2f;
 	float color[3] = {0.0f,0.0f,0.07f};
 	bool imguivis = true;
-	Model nano{ wnd.Gfx(),"E:/chilli game dev/HW3D/model/nano.gltf"};
+	Model nano{ wnd.Gfx(),"E:/chilli game dev/HW3D/model/nano_textured/nanosuit.obj"};
 	Camera cam;
 	PointLight light;
 };

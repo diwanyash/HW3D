@@ -61,7 +61,7 @@ void Camera::Translate(dx::XMFLOAT3 translation) noexcept
 {
 	dx::XMStoreFloat3( &translation, dx::XMVector3Transform(
 		dx::XMLoadFloat3( &translation ),
-		dx::XMMatrixRotationRollPitchYaw( pitch, yaw, 0.0f ) *
+		dx::XMMatrixRotationRollPitchYaw( 0.0f, yaw, 0.0f ) *
 		dx::XMMatrixScaling(travelSpeed, travelSpeed, travelSpeed )
 	));
 	pos = {

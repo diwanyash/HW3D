@@ -38,6 +38,8 @@ App::~App()
 
 void App::DoFrame()
 {
+	const auto dt = ft.Mark() * SpeedFactor;
+
 	wnd.Gfx().BeginFrame(color);
 	wnd.Gfx().SetCamera(cam.GetMatrix());
 	light.Bind( wnd.Gfx(), cam.GetMatrix() );
@@ -57,7 +59,7 @@ void App::DoFrame()
 				wnd.Gfx().EnableImgui();
 			}
 		}
-		else if (wnd.kbd.KeyIsPressed(VK_INSERT))
+		else if (wnd.kbd.KeyIsPressed(VK_ESCAPE))
 		{
 			if (wnd.IsCursorEnabled())
 			{
@@ -71,6 +73,43 @@ void App::DoFrame()
 			}
 		}
 		wnd.kbd.Flush();
+	}
+
+	if ( !wnd.IsCursorEnabled() )
+	{
+		if ( wnd.kbd.KeyIsPressed('W'))
+		{
+			cam.Translate({ 0.0f, 0.0f, dt });
+		}
+		if ( wnd.kbd.KeyIsPressed('S'))
+		{
+			cam.Translate({ 0.0f, 0.0f, -dt });
+		}
+		if( wnd.kbd.KeyIsPressed('A'))
+		{
+			cam.Translate({ -dt, 0.0f, 0.0f });
+		}
+		if ( wnd.kbd.KeyIsPressed('D'))
+		{
+			cam.Translate({ dt, 0.0f, 0.0f });
+		}
+		if ( wnd.kbd.KeyIsPressed( VK_SPACE ))
+		{
+			cam.Translate({ 0.0f, dt, 0.0f });
+		}
+		if ( wnd.kbd.KeyIsPressed( VK_CONTROL ))
+		{
+			cam.Translate({ 0.0f, -dt, 0.0f });
+		}
+	}
+
+
+	while (const auto delta = wnd.mouse.ReadRawDelta())
+	{
+		if (!wnd.IsCursorEnabled())
+		{
+			cam.Rotate(delta->x, delta->y);
+		}
 	}
 
 	nano.Draw( wnd.Gfx());

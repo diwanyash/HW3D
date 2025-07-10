@@ -42,7 +42,7 @@ class Model
 {
 public:
 	Model(Graphics& gfx, std::string filename) noexcept(!IS_DEBUG);
-	static std::unique_ptr<Mesh> ParseMesh(Graphics& gfx, aiMesh& mesh);
+	static std::unique_ptr<Mesh> ParseMesh(Graphics& gfx, aiMesh& mesh, const aiMaterial* const* pMaterials);
 	std::unique_ptr<Node> ParseNode(int& nextID, const aiNode& node) noxnd;
 	void Draw(Graphics& gfx) const noxnd;
 	void ShowWindow( const char* WindowName ) noexcept;

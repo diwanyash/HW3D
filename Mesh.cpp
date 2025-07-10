@@ -1,7 +1,6 @@
 #include "Mesh.h"
 #include "imgui/imgui.h"
 #include "Surface.h"
-#include "Texture.h"
 #include <unordered_map>
 #include "Sampler.h"
 
@@ -242,14 +241,22 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, aiMesh& mesh, const aiMate
 	}
 
 	std::vector< std::unique_ptr<Bindable>> bindablePtrs;
+	//bool hasSpecularMap = false;
 
 	if ( mesh.mMaterialIndex >= 0 )
 	{
 		using namespace std::string_literals;
+		const auto base = "E:/chilli game dev/HW3D/model/nano_textured/"s;
 		auto& material = *pMaterials[ mesh.mMaterialIndex ];
 		aiString texFileName;
 		material.GetTexture( aiTextureType_DIFFUSE, 0, &texFileName );
-		bindablePtrs.push_back( std::make_unique<Texture>( gfx, Surface::FromFile( "E:/chilli game dev/HW3D/model/nano_textured/"s + texFileName.C_Str() )));
+		bindablePtrs.push_back( std::make_unique<Texture>( gfx, Surface::FromFile( base + texFileName.C_Str() )));
+
+		if (material.GetTexture(aiTextureType_SPECULAR, 0, &texFileName) == aiReturn_SUCCESS)
+		{
+			bindablePtrs.push_back(std::make_unique<Texture>(gfx, Surface::FromFile(base + texFileName.C_Str()), 1));
+			//hasSpecularMap = true;
+		}
 		bindablePtrs.push_back( std::make_unique<Sampler>( gfx ) );
 	}
 

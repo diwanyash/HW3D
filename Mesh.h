@@ -3,9 +3,9 @@
 #include "BindableBase.h"
 #include <string>
 #include <optional>
-#include <assimp/scene.h>
-#include <assimp/Importer.hpp>
-#include <assimp/postprocess.h>
+#include "assimp/scene.h"
+#include "assimp/Importer.hpp"
+#include "assimp/postprocess.h"
 
 class Mesh : public DrawableBase<Mesh>
 {

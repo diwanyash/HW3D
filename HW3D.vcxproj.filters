@@ -105,9 +105,6 @@
     <ClCompile Include="TransformCBuff.cpp">
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
-    <ClCompile Include="Box.cpp">
-      <Filter>Source Files\Drawable</Filter>
-    </ClCompile>
     <ClCompile Include="imgui\imgui_widgets.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
@@ -135,12 +132,6 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Melon.cpp">
-      <Filter>Source Files\Drawable</Filter>
-    </ClCompile>
-    <ClCompile Include="Pyramid.cpp">
-      <Filter>Source Files\Drawable</Filter>
-    </ClCompile>
     <ClCompile Include="Surface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -153,19 +144,10 @@
     <ClCompile Include="Sampler.cpp">
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
-    <ClCompile Include="Sheet.cpp">
-      <Filter>Source Files\Drawable</Filter>
-    </ClCompile>
-    <ClCompile Include="SkinnedCube.cpp">
-      <Filter>Source Files\Drawable</Filter>
-    </ClCompile>
     <ClCompile Include="PointLight.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SolidSphere.cpp">
-      <Filter>Source Files\Drawable</Filter>
-    </ClCompile>
-    <ClCompile Include="Cylinder.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
     <ClCompile Include="AssImpTest.cpp">
@@ -254,12 +236,6 @@
     <ClInclude Include="TransformCBuff.h">
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
-    <ClInclude Include="Box.h">
-      <Filter>Header Files\Drawable</Filter>
-    </ClInclude>
-    <ClInclude Include="DrawableBase.h">
-      <Filter>Header Files\Drawable</Filter>
-    </ClInclude>
     <ClInclude Include="imgui\imstb_truetype.h">
       <Filter>imgui</Filter>
     </ClInclude>
@@ -296,12 +272,6 @@
     <ClInclude Include="IndexedTriangleList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Melon.h">
-      <Filter>Header Files\Drawable</Filter>
-    </ClInclude>
-    <ClInclude Include="Pyramid.h">
-      <Filter>Header Files\Drawable</Filter>
-    </ClInclude>
     <ClInclude Include="Surface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -314,9 +284,6 @@
     <ClInclude Include="Texture.h">
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
-    <ClInclude Include="Sheet.h">
-      <Filter>Header Files\Drawable</Filter>
-    </ClInclude>
     <ClInclude Include="Plane.h">
       <Filter>Header Files\Geometry</Filter>
     </ClInclude>
@@ -328,9 +295,6 @@
     </ClInclude>
     <ClInclude Include="Sphere.h">
       <Filter>Header Files\Geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="SkinnedCube.h">
-      <Filter>Header Files\Drawable</Filter>
     </ClInclude>
     <ClInclude Include="SolidSphere.h">
       <Filter>Header Files\Drawable</Filter>
@@ -347,9 +311,6 @@
     <ClInclude Include="Prism2.h">
       <Filter>Header Files\Geometry</Filter>
     </ClInclude>
-    <ClInclude Include="Cylinder.h">
-      <Filter>Header Files\Drawable</Filter>
-    </ClInclude>
     <ClInclude Include="AssImpTest.h">
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
@@ -364,6 +325,9 @@
     </ClInclude>
     <ClInclude Include="ConditionalNoexcept.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Atrasur.h">
+      <Filter>Header Files\Drawable</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

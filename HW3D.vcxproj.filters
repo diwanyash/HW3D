@@ -287,12 +287,6 @@
     <ClInclude Include="Plane.h">
       <Filter>Header Files\Geometry</Filter>
     </ClInclude>
-    <ClInclude Include="Cube.h">
-      <Filter>Header Files\Geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="Cone.h">
-      <Filter>Header Files\Geometry</Filter>
-    </ClInclude>
     <ClInclude Include="Sphere.h">
       <Filter>Header Files\Geometry</Filter>
     </ClInclude>
@@ -304,12 +298,6 @@
     </ClInclude>
     <ClInclude Include="BaseObject.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Prism.h">
-      <Filter>Header Files\Geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="Prism2.h">
-      <Filter>Header Files\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="AssImpTest.h">
       <Filter>Header Files\Drawable</Filter>
@@ -326,8 +314,8 @@
     <ClInclude Include="ConditionalNoexcept.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Atrasur.h">
-      <Filter>Header Files\Drawable</Filter>
+    <ClInclude Include="BindableCodex.h">
+      <Filter>Header Files\Bindable</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

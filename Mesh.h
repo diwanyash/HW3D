@@ -1,5 +1,4 @@
 #pragma once
-#include "DrawableBase.h"
 #include "BindableBase.h"
 #include <string>
 #include <optional>
@@ -7,10 +6,10 @@
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
 
-class Mesh : public DrawableBase<Mesh>
+class Mesh : public Drawable
 {
 public:
-	Mesh(Graphics& gfx, std::vector<std::unique_ptr<Bindable>> bindablePtr);
+	Mesh(Graphics& gfx, std::vector<std::shared_ptr<Bindable>> bindablePtr);
 	void Draw(Graphics& gfx, DirectX::FXMMATRIX accumulatedTransform) const noexcept;
 	DirectX::XMMATRIX GetTransformXM() const noexcept override;
 private:

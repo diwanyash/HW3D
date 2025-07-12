@@ -7,9 +7,6 @@ SolidSphere::SolidSphere(Graphics& gfx, float radius)
 {
 	namespace dx = DirectX;
 
-	if (!IsStaticInitialized())
-	{
-
 		struct Vertex
 		{
 			dx::XMFLOAT3 pos;
@@ -17,36 +14,35 @@ SolidSphere::SolidSphere(Graphics& gfx, float radius)
 
 		auto model = Sphere::Make<Vertex>();
 		model.Transform( dx::XMMatrixScaling( radius, radius, radius ));
-		AddBind(std::make_unique<VertexBuffer>(gfx, model.vertices));
-		AddIndexBuffer(std::make_unique<IndexBuffer>(gfx, model.indices));
+		AddBind(std::shared_ptr<VertexBuffer>(gfx, model.vertices));
+		AddBind(std::shared_ptr<IndexBuffer>(gfx, model.indices));
 
-		auto pvs = std::make_unique<VertexShader>(gfx, L"Shaderm\\SolidColorVS.cso");
+		auto pvs = std::shared_ptr<VertexShader>(gfx, L"Shaderm\\SolidColorVS.cso");
 		auto pvsbc = pvs->GetByteCode();
-		AddStaticBind(std::move(pvs));
+		AddBind(std::move(pvs));
 
-		AddStaticBind(std::make_unique<PixelShader>(gfx, L"Shaderm\\SolidColorPS.cso"));
+		AddBind(std::shared_ptr<PixelShader>(gfx, L"Shaderm\\SolidColorPS.cso"));
 
 		struct PSColorConstant
 		{
 			dx::XMFLOAT3 color = { 1.0f,1.0f,1.0f };
 			float padding;
 		} colorConst;
-		AddStaticBind(std::make_unique<PixelConstantBuffer<PSColorConstant>>(gfx, colorConst));///////////
+		AddBind(std::shared_ptr<PixelConstantBuffer<PSColorConstant>>(gfx, colorConst));///////////
 
 		const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
 		{
 			{"Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
 		};
 
-		AddStaticBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
+		AddBind(std::shared_ptr<InputLayout>(gfx, ied, pvsbc));
 
-		AddStaticBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
-	}
-
+		AddBind(std::shared_ptr<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
 
 
 
-	AddBind(std::make_unique<TransformCBuff>(gfx, *this));
+
+	AddBind(std::shared_ptr<TransformCBuff>(gfx, *this));
 }
 
 void SolidSphere::Update(float dt) noexcept

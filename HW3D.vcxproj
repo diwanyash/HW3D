@@ -189,16 +189,14 @@
   <ItemGroup>
     <ClInclude Include="App.h" />
     <ClInclude Include="AssImpTest.h" />
-    <ClInclude Include="Atrasur.h" />
     <ClInclude Include="BaseObject.h" />
     <ClInclude Include="Bindable.h" />
     <ClInclude Include="BindableBase.h" />
+    <ClInclude Include="BindableCodex.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="ConditionalNoexcept.h" />
-    <ClInclude Include="Cone.h" />
     <ClInclude Include="ConstantBuffers.h" />
-    <ClInclude Include="Cube.h" />
     <ClInclude Include="DeadException.h" />
     <ClInclude Include="DeadMath.h" />
     <ClInclude Include="DeadWin.h" />
@@ -227,8 +225,6 @@
     <ClInclude Include="PixelShader.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="PointLight.h" />
-    <ClInclude Include="Prism.h" />
-    <ClInclude Include="Prism2.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Sampler.h" />
     <ClInclude Include="SolidSphere.h" />

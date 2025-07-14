@@ -1,8 +1,11 @@
 #include "VertexBuffer.h"
 #include "Graphics.h"
 
-void VertexBuffer::Bind(Graphics& gfx) noexcept
+namespace bind
 {
-	const UINT offset = 0u;
-	GetContext(gfx)->IASetVertexBuffers(0u, 1u, pVertexBuffer.GetAddressOf(), &stride, &offset);
+	void VertexBuffer::Bind(Graphics& gfx) noexcept
+	{
+		const UINT offset = 0u;
+		GetContext(gfx)->IASetVertexBuffers(0u, 1u, pVertexBuffer.GetAddressOf(), &stride, &offset);
+	}
 }

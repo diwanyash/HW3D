@@ -1,6 +1,8 @@
 #include "Drawable.h"
 #include "IndexBuffer.h"
 
+using namespace bind;
+
 void Drawable::Draw(Graphics& gfx) const noexcept(!IS_DEBUG)
 {
 	for (auto& b : binds)

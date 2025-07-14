@@ -4,7 +4,11 @@
 #include <random>
 #include <memory>
 
-class Bindable;
+namespace bind
+{
+	class bindable;
+	class IndexBuffer;
+}
 
 class Drawable
 {
@@ -27,8 +31,8 @@ protected:
 		}
 		return nullptr;
 	}
-	void AddBind( std::shared_ptr<Bindable> bind) noexcept(!IS_DEBUG);
+	void AddBind( std::shared_ptr<bind::Bindable> bind) noexcept(!IS_DEBUG);
 private:
-	const class IndexBuffer* pIndexBuffer = nullptr;
-	std::vector<std::shared_ptr<Bindable>> binds;
+	const bind::IndexBuffer* pIndexBuffer = nullptr;
+	std::vector<std::shared_ptr<bind::Bindable>> binds;
 };

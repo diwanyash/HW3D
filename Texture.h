@@ -1,6 +1,8 @@
 #pragma once
 #include "Bindable.h"
 
+class Surface;
+
 namespace bind
 {
 	class Texture : public Bindable

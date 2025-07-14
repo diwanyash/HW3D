@@ -67,7 +67,7 @@ public:
 	void DisableImgui() noexcept;
 	bool IsImguiEnabled() const noexcept;
 	void DrawTestTriangle(int i_vp, float angle, float x, float y, float z);
-private:
+public:  /// MAKE IT PRIVATE AS SOON AS POSSSIBLE DA!!!
 	DirectX::XMMATRIX Projection;
 	DirectX::XMMATRIX Camera;
 	bool ImguiEnabled = true;

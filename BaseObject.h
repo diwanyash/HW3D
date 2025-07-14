@@ -1,9 +1,11 @@
 #pragma once
-#include "DrawableBase.h"
 #include "DeadMath.h"
+#include "Drawable.h"
+#include <random>
+#include <DirectXMath.h>
 
 template<class T>
-class BaseObject : public DrawableBase<T>
+class BaseObject : public Drawable
 {
 public:
 	BaseObject(

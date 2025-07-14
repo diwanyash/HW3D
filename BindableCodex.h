@@ -15,17 +15,12 @@ namespace bind
 		{
 			return Get().Resolve_<T>( gfx, std::forward<Params>( p )...);
 		}
-		// static void Store( std::shared_ptr<Bindable> bind )
-		// {
-		// 	Get().Store_( std::move( bind ) );
-		// }
 	private:
 		template < class T, typename...Params>
-		std::shared_ptr<Bindable> Resolve_( Graphics& gfx, Params&&...p ) const noxnd
+		std::shared_ptr<Bindable> Resolve_( Graphics& gfx, Params&&...p ) noxnd
 		{
 			const auto key = T::GenerateUID( std::forward<Params>( p )... );
-			const auto i = binds.find( key )
-			auto i = binds.find(key);
+			const auto i = binds.find(key);
 			if ( i == binds.end() )
 			{
 				auto bind = std::make_shared<T>(gfx, std::forward<Params>(p)...);

@@ -1,12 +1,12 @@
 #pragma once
 #include "Graphics.h"
 #include <DirectXMath.h>
-#include <random>
+#include "ConditionalNoexcept.h"
 #include <memory>
 
 namespace bind
 {
-	class bindable;
+	class Bindable;
 	class IndexBuffer;
 }
 
@@ -15,9 +15,9 @@ class Drawable
 public:
 	Drawable() = default;
 	Drawable( const Drawable& ) = delete;
-	virtual ~Drawable() = default;
 	virtual DirectX::XMMATRIX GetTransformXM() const noexcept = 0;
 	void Draw(Graphics& gfx) const noexcept(!IS_DEBUG);
+	virtual ~Drawable() = default;
 protected:
 	template<class T>
 	T* QueryBindable() noexcept

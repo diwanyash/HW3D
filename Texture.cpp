@@ -1,14 +1,18 @@
 #include "Texture.h"
 #include "Surface.h"
 #include "GraphicsThrowMacros.h"
+#include "BindableCodex.h"
+#include "InputLayout.h"
 
 namespace bind
 {
-	Texture::Texture(Graphics& gfx, const Surface& s, unsigned int slot)
+	Texture::Texture(Graphics& gfx, const std::string& path, UINT slot)
 		:
 		slot(slot)
 	{
 		INFOMAN(gfx);
+
+		const auto s = Surface::FromFile( path );
 
 		D3D11_TEXTURE2D_DESC texturedesc = {};
 		texturedesc.Width = s.GetWidth();
@@ -43,6 +47,19 @@ namespace bind
 	void Texture::Bind(Graphics& gfx) noexcept
 	{
 		GetContext(gfx)->PSSetShaderResources(slot, 1u, pTextureView.GetAddressOf());
+	}
+	std::shared_ptr<Bindable> Texture::Resolve(Graphics& gfx, const std::string& path, UINT slot)
+	{
+		return Codex::Resolve<Texture>( gfx, path, slot );
+	}
+	std::string Texture::GenerateUID(const std::string& path, UINT slot)
+	{
+		using namespace std::string_literals;
+		return typeid(Texture).name() + "#"s + path + "#" + std::to_string( slot ); 
+	}
+	std::string Texture::GetUID() const noexcept
+	{
+		return GenerateUID( path, slot );
 	}
 }
 

@@ -242,11 +242,11 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, aiMesh& mesh, const aiMate
 		auto& material = *pMaterials[ mesh.mMaterialIndex ];
 		aiString texFileName;
 		material.GetTexture( aiTextureType_DIFFUSE, 0, &texFileName );
-		bindablePtrs.push_back( std::make_shared<bind::Texture>( gfx, Surface::FromFile( base + texFileName.C_Str() )));
+		bindablePtrs.push_back( std::make_shared<bind::Texture>( gfx, base + texFileName.C_Str()));
 
 		if (material.GetTexture(aiTextureType_SPECULAR, 0, &texFileName) == aiReturn_SUCCESS)
 		{
-			bindablePtrs.push_back( std::make_shared<bind::Texture>(gfx, Surface::FromFile(base + texFileName.C_Str()), 1));
+			bindablePtrs.push_back( std::make_shared<bind::Texture>(gfx,base + texFileName.C_Str(), 1));
 			hasSpecularMap = true;
 		}
 		else
@@ -263,7 +263,7 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, aiMesh& mesh, const aiMate
 	auto pvsbc = pvs->GetByteCode();
 	bindablePtrs.push_back(std::move(pvs));
 
-	bindablePtrs.push_back( std::make_shared<bind::InputLayout>(gfx, vbuf.GetLayout().GetD3DLayout(), pvsbc));
+	bindablePtrs.push_back( std::make_shared<bind::InputLayout>(gfx, vbuf.GetLayout(), pvsbc));
 
 	if (hasSpecularMap)
 	{

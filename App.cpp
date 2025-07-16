@@ -17,6 +17,9 @@ App::App()
 	light( wnd.Gfx(), 0.5f)
 {
 	wnd.Gfx().SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 1000.0f));
+	auto a = bind::VertexShader::Resolve( wnd.Gfx(), "Shaderm\\TexturedPhongVS.cso");
+	auto b = bind::Sampler::Resolve( wnd.Gfx() );
+	auto c = bind::Sampler::Resolve( wnd.Gfx() );
 }
 
 int App::Go()

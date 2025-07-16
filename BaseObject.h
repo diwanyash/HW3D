@@ -26,15 +26,15 @@ public:
 		phi(adist(rng)),
 		chi(adist(rng))
 	{}
-	void Update(float dt) noexcept override
-	{
-		roll  = wrap_angle(roll + droll * dt );
-		pitch = wrap_angle(pitch + dpitch * dt);
-		yaw	  = wrap_angle(yaw + dyaw * dt  );
-		theta = wrap_angle(theta + dtheta * dt);
-		phi   = wrap_angle(phi + dphi * dt  );
-		chi   = wrap_angle(chi + dchi * dt  );
-	}
+	//void Update(float dt) noexcept override
+	//{
+	//	roll  = wrap_angle(roll + droll * dt );
+	//	pitch = wrap_angle(pitch + dpitch * dt);
+	//	yaw	  = wrap_angle(yaw + dyaw * dt  );
+	//	theta = wrap_angle(theta + dtheta * dt);
+	//	phi   = wrap_angle(phi + dphi * dt  );
+	//	chi   = wrap_angle(chi + dchi * dt  );
+	//}
 	DirectX::XMMATRIX GetTransformXM() const noexcept
 	{
 		namespace dx = DirectX;

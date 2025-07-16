@@ -259,7 +259,7 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, aiMesh& mesh, const aiMate
 	bindablePtrs.push_back( std::make_shared<bind::VertexBuffer>(gfx, vbuf));
 	bindablePtrs.push_back( std::make_shared<bind::IndexBuffer>(gfx, indices));
 
-	auto pvs = std::make_shared<bind::VertexShader>(gfx, L"Shaderm\\TexturedPhongVS.cso");
+	auto pvs = std::make_shared<bind::VertexShader>(gfx, "Shaderm\\TexturedPhongVS.cso");
 	auto pvsbc = pvs->GetByteCode();
 	bindablePtrs.push_back(std::move(pvs));
 

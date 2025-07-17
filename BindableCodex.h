@@ -38,6 +38,7 @@ namespace bind
 		// {
 		// 	binds[bind->GetUID()] = std::move( bind );
 		// }
+	public:
 		static Codex& Get()
 		{
 			static Codex codex;

@@ -265,7 +265,7 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, aiMesh& mesh, const aiMate
 	bindablePtrs.push_back( IndexBuffer::Resolve(gfx, meshTag, indices));
 
 	auto pvs = VertexShader::Resolve(gfx, "Shaderm\\TexturedPhongVS.cso");
-	auto pvsbc = static_cast<VertexShader&>(*pvs).GetByteCode();
+	auto pvsbc = pvs->GetByteCode();
 	bindablePtrs.push_back(std::move(pvs));
 
 	bindablePtrs.push_back( InputLayout::Resolve(gfx, vbuf.GetLayout(), pvsbc));

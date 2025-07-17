@@ -16,7 +16,7 @@ namespace bind
 		GFX_THROW_INFO(GetDevice(gfx)->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader));
 	}
 
-	std::shared_ptr<Bindable> PixelShader::Resolve( Graphics& gfx, const std::string& path)
+	std::shared_ptr<PixelShader> PixelShader::Resolve( Graphics& gfx, const std::string& path)
 	{
 		return Codex::Resolve<PixelShader>( gfx, path );
 	}

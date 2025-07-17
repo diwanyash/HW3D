@@ -16,7 +16,7 @@ SolidSphere::SolidSphere(Graphics& gfx, float radius)
 	AddBind( IndexBuffer::Resolve(gfx, geometryTag, model.indices));
 
 	auto pvs = VertexShader::Resolve(gfx, "Shaderm\\SolidColorVS.cso");
-	auto pvsbc = static_cast<VertexShader&>(*pvs).GetByteCode();
+	auto pvsbc = pvs->GetByteCode();
 	AddBind(std::move(pvs));
 
 	AddBind( PixelShader::Resolve(gfx, "Shaderm\\SolidColorPS.cso"));

@@ -124,6 +124,7 @@ void App::DoFrame()
 	ShowRawInputWindow();
 	cam.SpawnControlWindow();
 	light.SpawnControlWindow();
+	plane.SpawnControlWindow( wnd.Gfx() );
 	wnd.Gfx().EndFrame();
 }
 

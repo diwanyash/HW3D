@@ -17,6 +17,12 @@ cbuffer ObjectCBuf
     float padding[1];
 };
 
+cbuffer TransformBuf
+{
+    matrix modelView;
+    matrix modelViewProj;
+};
+
 Texture2D tex;
 Texture2D nmap;
 
@@ -30,6 +36,7 @@ float4 main(float3 worldPos : Position, float3 n : Normal, float2 tc : Texcoord)
         n.x = (nmap.Sample( splr, tc ).x) * 2.0f - 1.0f;
         n.y = (-nmap.Sample( splr, tc ).y) * 2.0f + 1.0f;
         n.z = -nmap.Sample( splr, tc ).z;
+        n = mul(n, (float3x3)modelView);
 
     }
 	// fragment to light vector data

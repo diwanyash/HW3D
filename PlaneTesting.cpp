@@ -2,6 +2,7 @@
 #include "Plane.h"
 #include "imgui/imgui.h"
 #include "BindableBase.h"
+#include "TransformCBuffDual.h"
 
 PlaneTesting::PlaneTesting(Graphics& gfx, float size)
 {
@@ -29,7 +30,7 @@ PlaneTesting::PlaneTesting(Graphics& gfx, float size)
 
 	AddBind(Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
 
-	AddBind(std::make_shared<TransformCBuff>(gfx, *this));
+	AddBind(std::make_shared<TransformCBuffDual>(gfx, *this, 0u, 2u));
 }
 
 void PlaneTesting::SetPos(DirectX::XMFLOAT3 pos) noexcept

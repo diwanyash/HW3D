@@ -6,6 +6,7 @@
 #include "PointLight.h"
 #include "Mesh.h"
 #include <set>
+#include "PlaneTesting.h"
 
 // MERGED BOTH BRANCHES INTO MASTER
 
@@ -29,4 +30,5 @@ private:
 	Model nano{ wnd.Gfx(),"E:/chilli game dev/HW3D/model/nano_textured/nanosuit.obj"};
 	Camera cam;
 	PointLight light;
+	PlaneTesting plane;
 };

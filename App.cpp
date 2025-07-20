@@ -15,8 +15,10 @@ GDIPlusManager gdi;
 App::App()
 	:
 	wnd(1280, 720, "happy window"),
-	light( wnd.Gfx(), 0.5f)
+	light( wnd.Gfx(), 0.5f),
+	plane( wnd.Gfx(), 4.0f )
 {
+	plane.SetPos( { 1.0f, 15.0f, -2.0f } );
 	wnd.Gfx().SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 1000.0f));
 }
 
@@ -104,7 +106,6 @@ void App::DoFrame()
 		}
 	}
 
-
 	while (const auto delta = wnd.mouse.ReadRawDelta())
 	{
 		if (!wnd.IsCursorEnabled())
@@ -115,6 +116,7 @@ void App::DoFrame()
 
 	nano.Draw( wnd.Gfx());
 	light.Draw( wnd.Gfx() );
+	plane.Draw( wnd.Gfx() );
 
 	// ImGui Windows
 	SpawnSimulationWindows();

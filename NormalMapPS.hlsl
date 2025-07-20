@@ -27,7 +27,9 @@ float4 main(float3 worldPos : Position, float3 n : Normal, float2 tc : Texcoord)
 {
     if ( NormalMappingEnabled )
     {
-        n = -nmap.Sample( splr, tc ).xyz;
+        n.x = (nmap.Sample( splr, tc ).x) * 2.0f - 1.0f;
+        n.y = (-nmap.Sample( splr, tc ).y) * 2.0f + 1.0f;
+        n.z = -nmap.Sample( splr, tc ).z;
 
     }
 	// fragment to light vector data

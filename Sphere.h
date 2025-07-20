@@ -13,7 +13,7 @@ public:
 		namespace dx = DirectX;
 		assert( latdiv >= 3 );
 
-		const auto base = dx::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f );
+		const auto base = dx::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f   );
 		const float LattitudeAngle = PI / latdiv;
 		const float LongitudeAngle = 2.0f * PI / longdiv;
 

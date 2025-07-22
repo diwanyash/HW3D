@@ -14,6 +14,8 @@ namespace Dvtx
 		{
 			Position2D,
 			Position3D,
+			Tangent,
+			Bitangent,
 			Texture2D,
 			Normal,
 			Float3Color,
@@ -35,6 +37,20 @@ namespace Dvtx
 			static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
 			static constexpr const char* semantic = "Position";
 			static constexpr const char* code = "P3";
+		};
+		template<> struct Map<Tangent>
+		{
+			using SysType = DirectX::XMFLOAT3;
+			static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
+			static constexpr const char* semantic = "Tangent";
+			static constexpr const char* code = "NT";
+		};
+		template<> struct Map<Bitangent>
+		{
+			using SysType = DirectX::XMFLOAT3;
+			static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
+			static constexpr const char* semantic = "Bitangent";
+			static constexpr const char* code = "NB";
 		};
 		template<> struct Map<Texture2D>
 		{
@@ -139,6 +155,12 @@ namespace Dvtx
 				break;
 			case VertexLayout::Position3D:
 				SetAttribute<VertexLayout::Position3D>(pAttribute, std::forward<T>(val));
+				break;
+			case VertexLayout::Tangent:
+				SetAttribute<VertexLayout::Tangent>(pAttribute, std::forward<T>(val));
+				break;
+			case VertexLayout::Bitangent:
+				SetAttribute<VertexLayout::Bitangent>(pAttribute, std::forward<T>(val));
 				break;
 			case VertexLayout::Texture2D:
 				SetAttribute<VertexLayout::Texture2D>(pAttribute, std::forward<T>(val));

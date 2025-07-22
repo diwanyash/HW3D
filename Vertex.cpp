@@ -59,6 +59,10 @@ namespace Dvtx
 			return sizeof(Map<Position2D>::SysType);
 		case Position3D:
 			return sizeof(Map<Position3D>::SysType);
+		case Tangent:
+			return sizeof(Map<Tangent>::SysType);
+		case Bitangent:
+			return sizeof(Map<Bitangent>::SysType);
 		case Texture2D:
 			return sizeof(Map<Texture2D>::SysType);
 		case Normal:
@@ -85,6 +89,10 @@ namespace Dvtx
 			return Map<Position2D>::code;
 		case Position3D:
 			return Map<Position3D>::code;
+		case Tangent:
+			return Map<Tangent>::code;
+		case Bitangent:
+			return Map<Bitangent>::code;
 		case Texture2D:
 			return Map<Texture2D>::code;
 		case Normal:
@@ -117,6 +125,10 @@ namespace Dvtx
 			return GenerateDesc<Position2D>(GetOffset());
 		case Position3D:
 			return GenerateDesc<Position3D>(GetOffset());
+		case Tangent:
+			return GenerateDesc<Tangent>(GetOffset());
+		case Bitangent:
+			return GenerateDesc<Bitangent>(GetOffset());
 		case Texture2D:
 			return GenerateDesc<Texture2D>(GetOffset());
 		case Normal:

@@ -7,6 +7,7 @@
 #include "Mesh.h"
 #include <set>
 #include "PlaneTesting.h"
+#include "TestCube.h"
 
 // MERGED BOTH BRANCHES INTO MASTER
 
@@ -31,4 +32,5 @@ private:
 	Camera cam;
 	PointLight light;
 	PlaneTesting plane;
+	TestCube cube;
 };

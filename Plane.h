@@ -5,6 +5,7 @@
 #include "Vertex.h"
 #include <array>
 #include <optional>
+#include "Cube.h"
 
 class Plane
 {

@@ -15,12 +15,8 @@ GDIPlusManager gdi;
 App::App()
 	:
 	wnd(1280, 720, "happy window"),
-	light(wnd.Gfx(), 0.5f),
-	plane(wnd.Gfx(), 4.0f),
-	cube( wnd.Gfx(), 6.0f )
+	light(wnd.Gfx(), 0.5f)
 {
-	cube.SetPos({ 9.0f, 14.0f, -6.0f });
-	plane.SetPos( { 1.0f, 15.0f, -2.0f } );
 	wnd.Gfx().SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 9.0f / 16.0f, 0.5f, 1000.0f));
 }
 
@@ -116,19 +112,15 @@ void App::DoFrame()
 		}
 	}
 
-	nano.Draw( wnd.Gfx());
+	wall.Draw( wnd.Gfx() );
 	light.Draw( wnd.Gfx() );
-	plane.Draw( wnd.Gfx() );
-	cube.Draw( wnd.Gfx() );
 
 	// ImGui Windows
 	SpawnSimulationWindows();
-	nano.ShowWindow("NanoSuit");
 	ShowRawInputWindow();
 	cam.SpawnControlWindow();
 	light.SpawnControlWindow();
-	plane.SpawnControlWindow( wnd.Gfx() );
-	cube.SpawnControlWindow( wnd.Gfx() );
+	wall.ShowWindow( "The Wall" );
 	wnd.Gfx().EndFrame();
 }
 
@@ -164,7 +156,6 @@ void App::SpawnSimulationWindows() noexcept
 			cam.Reset();
 			light.Reset();
 			SpeedFactor = 0.4f;
-			nano.Reset();
 		}
 	}
 	ImGui::End();

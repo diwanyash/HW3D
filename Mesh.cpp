@@ -182,7 +182,8 @@ Model::Model(Graphics& gfx,const std::string filename) noexcept(!IS_DEBUG)
 		aiProcess_Triangulate |
 		aiProcess_JoinIdenticalVertices |
 		aiProcess_ConvertToLeftHanded |
-		aiProcess_GenNormals);
+		aiProcess_GenNormals |
+		aiProcess_CalcTangentSpace );
 
 	for (size_t i = 0; i < pScene->mNumMeshes; i++)
 	{
@@ -202,6 +203,8 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, aiMesh& mesh, const aiMate
 		VertexLayout{}
 		.Append(VertexLayout::Position3D)
 		.Append(VertexLayout::Normal)
+		.Append(VertexLayout::Tangent)
+		.Append(VertexLayout::Bitangent)
 		.Append(VertexLayout::Texture2D)
 	));
 
@@ -214,6 +217,8 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, aiMesh& mesh, const aiMate
 		vbuf.EmplaceBack(
 			*reinterpret_cast<DirectX::XMFLOAT3*>(&mesh.mVertices[i]),
 			*reinterpret_cast<DirectX::XMFLOAT3*>(&mesh.mNormals[i]),
+			*reinterpret_cast<DirectX::XMFLOAT3*>(&mesh.mTangents[i]),
+			*reinterpret_cast<DirectX::XMFLOAT3*>(&mesh.mBitangents[i]),
 			*reinterpret_cast<DirectX::XMFLOAT2*>(&mesh.mTextureCoords[0][i])
 		);
 	}
@@ -236,7 +241,7 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, aiMesh& mesh, const aiMate
 	
 
 	using namespace std::string_literals;
-	const auto base = "E:/chilli game dev/HW3D/model/nano_textured/"s;
+	const auto base = "E:/chilli game dev/HW3D/model/brick_wall/"s;
 
 	float shininess = 35.0f;
 	if ( mesh.mMaterialIndex >= 0 )
@@ -255,6 +260,10 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, aiMesh& mesh, const aiMate
 		{
 			material.Get( AI_MATKEY_SHININESS, shininess );
 		}
+
+		material.GetTexture( aiTextureType_NORMALS, 0u, &texFileName );
+		bindablePtrs.push_back( Texture::Resolve( gfx, base + texFileName.C_Str(), 2 ) );
+
 		bindablePtrs.push_back( Sampler::Resolve( gfx ) );
 	}
 
@@ -263,7 +272,7 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, aiMesh& mesh, const aiMate
 	bindablePtrs.push_back( VertexBuffer::Resolve(gfx, meshTag ,vbuf));
 	bindablePtrs.push_back( IndexBuffer::Resolve(gfx, meshTag, indices));
 
-	auto pvs = VertexShader::Resolve(gfx, "Shaderm\\TexturedPhongVS.cso");
+	auto pvs = VertexShader::Resolve(gfx, "Shaderm\\PhongVSNormalMap.cso");
 	auto pvsbc = pvs->GetByteCode();
 	bindablePtrs.push_back(std::move(pvs));
 
@@ -271,17 +280,27 @@ std::unique_ptr<Mesh> Model::ParseMesh(Graphics& gfx, aiMesh& mesh, const aiMate
 
 	if (hasSpecularMap)
 	{
-		bindablePtrs.push_back( PixelShader::Resolve(gfx, "Shaderm\\TexturedSpecPhongPS.cso"));
+		bindablePtrs.push_back( PixelShader::Resolve(gfx, "Shaderm\\PhongPSSpecNormalMap.cso"));
+
+
+		struct PSMaterialConstant
+		{
+			BOOL  normalMapEnabled = TRUE;
+			float padding[3];
+		} pmc;
+
+		bindablePtrs.push_back(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, pmc, 1u));
 	}
 	else
 	{
-		bindablePtrs.push_back( PixelShader::Resolve(gfx, "Shaderm\\TexturedPhongPS.cso") );
+		bindablePtrs.push_back( PixelShader::Resolve(gfx, "Shaderm\\PhongPSNormalMap.cso") );
 
 		struct PSMaterialConstant
 		{
 			float specularIntensity = 1.6f;
 			float specularPower;
-			float padding[2];
+			BOOL normalMapEnabled = TRUE;
+			float padding[1];
 		} colorConst;
 		colorConst.specularPower = shininess;
 	

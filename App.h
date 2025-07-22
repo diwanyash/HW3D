@@ -28,9 +28,7 @@ private:
 	float SpeedFactor = 1.2f;
 	float color[3] = {0.07f,0.0f,0.12f};
 	bool imguivis = true;
-	Model nano{ wnd.Gfx(),"E:/chilli game dev/HW3D/model/nano_textured/nanosuit.obj"};
+	Model wall{ wnd.Gfx(),"E:/chilli game dev/HW3D/model/brick_wall/brick_wall.obj"};
 	Camera cam;
 	PointLight light;
-	PlaneTesting plane;
-	TestCube cube;
 };

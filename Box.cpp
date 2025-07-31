@@ -16,7 +16,9 @@ Box::Box(Graphics& gfx, std::mt19937& rng,
 	std::uniform_real_distribution<float>& bdist,
 	DirectX::XMFLOAT3 Material)
 	:
-	BaseObject( gfx, rng, adist, ddist, odist, rdist)
+	BaseObject( gfx, rng, adist, ddist, odist, rdist),
+	dummy(rng),
+	ff(bdist)
 {
 	namespace dx = DirectX;
 
@@ -83,8 +85,60 @@ Box::Box(Graphics& gfx, std::mt19937& rng,
 	pPhysicsBody->attachShape(*shape);
 	physx::PxRigidBodyExt::updateMassAndInertia(*pPhysicsBody, 10.0f);
 	PhysXWrapper::Get()->GetgScene()->addActor(*pPhysicsBody);
+	pPhysicsBody->setLinearVelocity(PxVec3(0.0f, 0.1f, 0.0f));
 
 }
+
+Box::Box(Graphics& gfx, physx::PxPhysics* physics, float width, float height, float depth)
+	: BaseObject(gfx, dummy ,ff,ff,ff,ff)
+{
+	namespace dx = DirectX;
+
+	if (!IsStaticInitialized())
+	{
+		struct Vertex {
+			dx::XMFLOAT3 pos;
+			dx::XMFLOAT3 n;
+		};
+
+		auto model = Cube::MakeIndependent<Vertex>();
+		model.SetNormalsIndependentFlat();
+		AddStaticBind(std::make_unique<VertexBuffer>(gfx, model.vertices));
+
+		auto pvs = std::make_unique<VertexShader>(gfx, L"Shaderm\\PhongVS.cso");
+		auto pvsbc = pvs->GetByteCode();
+		AddStaticBind(std::move(pvs));
+
+		AddStaticBind(std::make_unique<PixelShader>(gfx, L"Shaderm\\PhongPS.cso"));
+		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, model.indices));
+
+		const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
+		{
+			{"Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
+			{"Normal",0,DXGI_FORMAT_R32G32B32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0},
+		};
+		AddStaticBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
+		AddStaticBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
+	}
+	else
+	{
+		SetIndexFromStatic();
+	}
+
+	AddBind(std::make_unique<TransformCBuff>(gfx, *this));
+	materialConstants.color = { 1.0f, 1.0f, 1.0f }; // Default white
+	AddBind(std::make_unique<MaterialCbuf>(gfx, materialConstants, 1u));
+
+	// Create physics body
+	pPhysicsBody = physics->createRigidDynamic(PxTransform(0.0f, 0.0f, 0.0f));
+	physx::PxVec3 halfExtent(width / 2.0f, height / 2.0f, depth / 2.0f);
+	physx::PxShape* shape = physics->createShape(physx::PxBoxGeometry(halfExtent), *PhysXWrapper::Get()->GetgMaterial());
+
+	pPhysicsBody->attachShape(*shape);
+	physx::PxRigidBodyExt::updateMassAndInertia(*pPhysicsBody, 10.0f);
+	PhysXWrapper::Get()->GetgScene()->addActor(*pPhysicsBody);
+}
+
 
 DirectX::XMMATRIX Box::GetTransformXM() const noexcept
 {
@@ -122,6 +176,15 @@ bool Box::SpawnControlWindow(int id, Graphics& gfx) noexcept
 	}
 
 	return open;
+}
+
+void Box::SetPosition(float x, float y, float z)
+{
+	if (pPhysicsBody)
+	{
+		PxTransform t(PxVec3(x, y, z));
+		pPhysicsBody->setGlobalPose(t);
+	}
 }
 
 void Box::SyncMaterial(Graphics& gfx) noexcept(!IS_DEBUG)

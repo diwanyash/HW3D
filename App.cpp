@@ -15,6 +15,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include "PhysXWrapper.h"
 
 namespace dx = DirectX;
 GDIPlusManager gdi;
@@ -24,6 +25,8 @@ App::App()
 	wnd(800, 600, "happy window"),
 	light( wnd.Gfx(), 0.5f)
 {
+
+	CreateOrbitingBoxes(wnd.Gfx(), PhysXWrapper::Get()->GetgPhysics(), PhysXWrapper::Get()->GetgScene());
 	class Factory
 	{
 	public:
@@ -119,6 +122,10 @@ void App::DoFrame()
 	float dt = ft.Mark() * SpeedFactor;
 
 	wnd.Gfx().BeginFrame(color[0], color[1], color[2]);
+	PhysXWrapper::Get()->StepSimulation(dt);
+	PhysXWrapper::Get()->GetgScene()->simulate(dt);      // e.g. 1.0f / 60.0f
+	PhysXWrapper::Get()->GetgScene()->fetchResults(true);
+	UpdateOrbiterForces();
 	wnd.Gfx().SetCamera(cam.GetMatrix());
 	light.Bind( wnd.Gfx(), cam.GetMatrix() );
 
@@ -215,3 +222,55 @@ void App::SpawnSimulationWindows() noexcept
 	}
 	ImGui::End();
 }
+
+void App::CreateOrbitingBoxes(Graphics& gfx, PxPhysics* physics, PxScene* scene)
+{
+	const int numBoxes = 20;
+	const float radius = 10.0f;
+	const float boxSize = 1.0f;
+	const float orbitSpeed = 10.0f;
+
+	orbiters.clear();
+
+	for (int i = 0; i < numBoxes; ++i)
+	{
+		float angle = (PxTwoPi * i) / numBoxes;
+		float x = orbitCenter.x + radius * cosf(angle);
+		float z = orbitCenter.z + radius * sinf(angle);
+
+		auto box = std::make_unique<Box>(gfx, physics, boxSize, boxSize, boxSize);
+		box->SetPosition(x, orbitCenter.y, z);
+
+		PxRigidDynamic* body = box->GetRigidBody();
+
+		// Tangent direction to orbit circle
+		PxVec3 toCenter = orbitCenter - PxVec3(x, orbitCenter.y, z);
+		PxVec3 tangentVel = PxVec3(-toCenter.z, 0.0f, toCenter.x).getNormalized() * orbitSpeed;
+
+		body->setLinearVelocity(tangentVel);
+		body->setAngularDamping(0.5f); // Reduce spin
+		body->setLinearDamping(0.0f);  // Let it orbit freely
+
+		scene->addActor(*body);
+		orbiters.push_back(std::move(box));
+	}
+}
+
+void App::UpdateOrbiterForces()
+{
+	for (auto& orbiter : orbiters)
+	{
+		PxRigidDynamic* body = orbiter->GetRigidBody();
+		PxVec3 pos = body->getGlobalPose().p;
+		PxVec3 toCenter = orbitCenter - pos;
+		float distSq = toCenter.magnitudeSquared();
+
+		if (distSq > 0.001f)
+		{
+			// Apply force using an inverse-square falloff
+			PxVec3 force = toCenter.getNormalized() * (500.0f / distSq);
+			body->addForce(force, PxForceMode::eACCELERATION);
+		}
+	}
+}
+

@@ -13,8 +13,11 @@ public:
 		std::uniform_real_distribution<float>& bdist,
 		DirectX::XMFLOAT3 material
 	);
+	Box(Graphics& gfx, physx::PxPhysics* physics, float width, float height, float depth);
 	DirectX::XMMATRIX GetTransformXM() const noexcept;
 	bool SpawnControlWindow(int id, Graphics& gfx)noexcept;
+	// In Box.h
+	void SetPosition(float x, float y, float z);
 private:
 	void SyncMaterial( Graphics& gfx) noexcept(!IS_DEBUG);
 private:
@@ -28,7 +31,6 @@ private:
 	using MaterialCbuf = PixelConstantBuffer<PSMaterialConstant>;
 private:
 	DirectX::XMFLOAT3X3 mt;
-protected:
-	physx::PxRigidDynamic* pPhysicsBody = nullptr;
-
+	std::mt19937 dummy;
+	std::uniform_real_distribution<float> ff;
 };

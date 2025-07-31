@@ -28,4 +28,7 @@ private:
 	using MaterialCbuf = PixelConstantBuffer<PSMaterialConstant>;
 private:
 	DirectX::XMFLOAT3X3 mt;
+protected:
+	physx::PxRigidDynamic* pPhysicsBody = nullptr;
+
 };

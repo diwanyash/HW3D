@@ -76,7 +76,7 @@ App::App()
 		std::uniform_real_distribution<float> rdist{ 10.0f, 20.0f };
 		std::uniform_real_distribution<float> bdist{ 1.0f, 3.0f };
 		std::uniform_real_distribution<float> cdist{ 0.0f, 1.0f };
-		std::uniform_int_distribution<int> typedist{ 0, 4 };
+		std::uniform_int_distribution<int> typedist{ 2, 2 };
 		std::uniform_int_distribution<int> tdist{ 3, 30 };
 	};
 

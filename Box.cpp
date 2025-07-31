@@ -6,6 +6,7 @@
 #include "BindableBase.h"
 #include "DirectXMath.h"
 #include "GraphicsThrowMacros.h"
+#include "PhysXWrapper.h"
 
 Box::Box(Graphics& gfx, std::mt19937& rng,
 	std::uniform_real_distribution<float>& adist, 
@@ -71,6 +72,17 @@ Box::Box(Graphics& gfx, std::mt19937& rng,
 	dx::XMStoreFloat3x3(
 		&mt,
 		dx::XMMatrixScaling(1.0f, 1.0f, bdist(rng))); 
+
+	pPhysicsBody = PhysXWrapper::Get()->GetgPhysics()->createRigidDynamic(PxTransform(1.0f, 1.0f, 1.0f));
+	physx::PxVec3 halfExtent = physx::PxVec3(0.5f, 0.5f, 0.5f);  // Half of cube size
+	physx::PxMaterial* material = PhysXWrapper::Get()->GetgMaterial();  // Assuming you add this method
+	physx::PxShape* shape = PhysXWrapper::Get()->GetPhysics()->createShape(
+		physx::PxBoxGeometry(halfExtent),
+		*PhysXWrapper::Get()->GetgMaterial()
+	); 
+	pPhysicsBody->attachShape(*shape);
+	physx::PxRigidBodyExt::updateMassAndInertia(*pPhysicsBody, 10.0f);
+	PhysXWrapper::Get()->GetgScene()->addActor(*pPhysicsBody);
 
 }
 

@@ -22,7 +22,7 @@ private:
 	void SpawnBoxWindowManagerWindow() noexcept;
 	void SpawnBoxWindows() noexcept;
 	void SpawnSimulationWindows() noexcept;
-	static constexpr int nDrawables = 120;
+	static constexpr int nDrawables = 10;
 	float SpeedFactor = 0.4f;
 	float color[3] = {0.0f,0.0f,0.06f};
 	DirectX::XMFLOAT3 suzcolor = {0.0f,1.0f,0.0f};

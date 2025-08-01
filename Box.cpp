@@ -85,7 +85,15 @@ Box::Box(Graphics& gfx, std::mt19937& rng,
 	pPhysicsBody->attachShape(*shape);
 	physx::PxRigidBodyExt::updateMassAndInertia(*pPhysicsBody, 10.0f);
 	PhysXWrapper::Get()->GetgScene()->addActor(*pPhysicsBody);
-	pPhysicsBody->setLinearVelocity(PxVec3(0.0f, 0.1f, 0.0f));
+	//pPhysicsBody->setLinearVelocity(PxVec3(0.0f, 0.1f, 0.0f));
+	pPhysicsBody->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);    // no gravity
+	pPhysicsBody->setLinearVelocity(PxVec3(0.0f));                       // zero velocity
+	pPhysicsBody->setAngularVelocity(PxVec3(0.0f));                      // no spin
+	pPhysicsBody->setLinearDamping(100.0f);                              // kill all linear motion
+	pPhysicsBody->setAngularDamping(100.0f);                             // kill all angular motion
+	pPhysicsBody->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, false); // ensure dynamic
+	pPhysicsBody->clearForce();                                          // no residual forces
+	pPhysicsBody->clearTorque();
 
 }
 
@@ -129,6 +137,10 @@ Box::Box(Graphics& gfx, physx::PxPhysics* physics, float width, float height, fl
 	materialConstants.color = { 1.0f, 1.0f, 1.0f }; // Default white
 	AddBind(std::make_unique<MaterialCbuf>(gfx, materialConstants, 1u));
 
+	dx::XMStoreFloat3x3(
+		&mt,
+		dx::XMMatrixScaling(1.0f, 1.0f,1.0f));
+
 	// Create physics body
 	pPhysicsBody = physics->createRigidDynamic(PxTransform(0.0f, 0.0f, 0.0f));
 	physx::PxVec3 halfExtent(width / 2.0f, height / 2.0f, depth / 2.0f);
@@ -137,6 +149,17 @@ Box::Box(Graphics& gfx, physx::PxPhysics* physics, float width, float height, fl
 	pPhysicsBody->attachShape(*shape);
 	physx::PxRigidBodyExt::updateMassAndInertia(*pPhysicsBody, 10.0f);
 	PhysXWrapper::Get()->GetgScene()->addActor(*pPhysicsBody);
+
+
+
+	//pPhysicsBody->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);    // no gravity
+	//pPhysicsBody->setLinearVelocity(PxVec3(0.0f));                       // zero velocity
+	//pPhysicsBody->setAngularVelocity(PxVec3(0.0f));                      // no spin
+	//pPhysicsBody->setLinearDamping(100.0f);                              // kill all linear motion
+	//pPhysicsBody->setAngularDamping(100.0f);                             // kill all angular motion
+	//pPhysicsBody->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, false); // ensure dynamic
+	//pPhysicsBody->clearForce();                                          // no residual forces
+	//pPhysicsBody->clearTorque();
 }
 
 

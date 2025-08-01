@@ -1,4 +1,4 @@
-#include "App.h"
+﻿#include "App.h"
 #include "Box.h"
 #include "Melon.h"
 #include "Pyramid.h"
@@ -16,6 +16,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include "PhysXWrapper.h"
+#include <iostream>
 
 namespace dx = DirectX;
 GDIPlusManager gdi;
@@ -25,8 +26,10 @@ App::App()
 	wnd(800, 600, "happy window"),
 	light( wnd.Gfx(), 0.5f)
 {
+	auto& gfx = wnd.Gfx();
+	auto* physics = PhysXWrapper::Get()->GetgPhysics();
+	auto* scene = PhysXWrapper::Get()->GetgScene();
 
-	CreateOrbitingBoxes(wnd.Gfx(), PhysXWrapper::Get()->GetgPhysics(), PhysXWrapper::Get()->GetgScene());
 	class Factory
 	{
 	public:
@@ -83,7 +86,7 @@ App::App()
 		std::uniform_int_distribution<int> tdist{ 3, 30 };
 	};
 
-	Factory factory( wnd.Gfx() );
+	Factory factory( gfx );
 	drawable.reserve( nDrawables );
 	std::generate_n( std::back_inserter(drawable), nDrawables, factory );
 
@@ -95,8 +98,9 @@ App::App()
 		}
 	}
 
+	CreateOrbitingBoxes(gfx, physics, scene);
 
-	wnd.Gfx().SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 1000.0f));
+	gfx.SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 1000.0f));
 }
 
 int App::Go()
@@ -154,6 +158,11 @@ void App::DoFrame()
 		d->Update(wnd.kbd.KeyIsPressed(VK_SPACE) ? 0.0f : dt);
 		d->Draw(wnd.Gfx());
 	}	
+	for ( auto& o : orbiters)
+	{
+		o->Update(dt);
+		o->Draw(wnd.Gfx());
+	}
 	light.Draw( wnd.Gfx() );
 
 	// ImGui Windows
@@ -162,6 +171,51 @@ void App::DoFrame()
 	light.SpawnControlWindow();
 	SpawnBoxWindowManagerWindow();
 	SpawnBoxWindows();
+
+	// orbits vars
+	if (showOrbitDebug)
+		DrawOrbitDebug(wnd.Gfx());
+	auto* physics = PhysXWrapper::Get()->GetgPhysics();
+	auto* scene = PhysXWrapper::Get()->GetgScene();
+	// imgui orbit
+	if (showOrbitSettings && ImGui::Begin("Orbit Settings", &showOrbitSettings))
+	{
+		ImGui::Text("Orbiting Parameters");
+
+		// Orbit Dynamics
+		ImGui::SliderFloat("Orbit Speed", &orbitSpeed, 0.0f, 100.0f, "%.1f");
+		ImGui::SliderFloat("Force Scale", &forceScale, 0.0f, 1000.0f, "%.1f");
+		ImGui::SliderFloat("Orbit Radius", &initialRadius, 1.0f, 50.0f, "%.1f");
+		ImGui::SliderInt("Box Count", &numOrbitingBoxes, 1, 100);
+		ImGui::Checkbox("Enable Gravity", &orbitUseGravity);
+		ImGui::Checkbox("Apply Force Every Frame", &applyForceContinuously);
+		ImGui::Checkbox("Show Orbit Debug", &showOrbitDebug);
+
+		ImGui::Separator();
+
+		// Box Size and Material
+		ImGui::Text("Box Parameters");
+		ImGui::SliderFloat("Box Size", &boxSize, 0.1f, 5.0f, "%.2f");
+		ImGui::ColorEdit3("Box Color", reinterpret_cast<float*>(&orbitBoxColor));
+
+		ImGui::Separator();
+
+		// Actions
+		if (ImGui::Button("Respawn Orbiters"))
+		{
+			CreateOrbitingBoxes(wnd.Gfx(), physics, scene); // assumes these exist
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Clear Orbiters"))
+		{
+			orbiters.clear();
+		}
+
+		ImGui::End();
+	}
+
+
+
 	wnd.Gfx().EndFrame();
 }
 
@@ -219,58 +273,102 @@ void App::SpawnSimulationWindows() noexcept
 		ImGui::SliderFloat("Speed Factor", &SpeedFactor, 0.0f, 5.0f, "%.4f", ImGuiSliderFlags_Logarithmic);
 		ImGui::Text("Appplication Average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::Text("Press 'I' to Disable/Enable Imgui");
+		//if ( ImGui::Button("Reset") )
+		//{
+		//	CreateOrbitingBoxes(wnd.Gfx(), PhysXWrapper::Get()->GetgPhysics(), PhysXWrapper::Get()->GetgScene());
+		//}
+		for ( auto& o : orbiters)
+		{
+			ImGui::Text("box pos x = %.1f , y = %.1f, z = %.1f", o->GetPosition().x,
+				o->GetPosition().y, o->GetPosition().z);
+		}
 	}
 	ImGui::End();
 }
 
 void App::CreateOrbitingBoxes(Graphics& gfx, PxPhysics* physics, PxScene* scene)
 {
-	const int numBoxes = 20;
-	const float radius = 10.0f;
-	const float boxSize = 1.0f;
-	const float orbitSpeed = 10.0f;
 
 	orbiters.clear();
 
-	for (int i = 0; i < numBoxes; ++i)
+	for (int i = 0; i < numOrbitingBoxes; ++i)
 	{
-		float angle = (PxTwoPi * i) / numBoxes;
-		float x = orbitCenter.x + radius * cosf(angle);
-		float z = orbitCenter.z + radius * sinf(angle);
+		float angle = (PxTwoPi * i) / numOrbitingBoxes;
+		float x = orbitCenter.x + initialRadius * cosf(angle);
+		float z = orbitCenter.z + initialRadius * sinf(angle);
 
 		auto box = std::make_unique<Box>(gfx, physics, boxSize, boxSize, boxSize);
-		box->SetPosition(x, orbitCenter.y, z);
+		box->SetPosition(x + distancernd(rngg), orbitCenter.y, z + distancernd(rngg));
 
 		PxRigidDynamic* body = box->GetRigidBody();
 
-		// Tangent direction to orbit circle
+
+		body->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, !orbitUseGravity);
+
+		// Initial tangent velocity
 		PxVec3 toCenter = orbitCenter - PxVec3(x, orbitCenter.y, z);
 		PxVec3 tangentVel = PxVec3(-toCenter.z, 0.0f, toCenter.x).getNormalized() * orbitSpeed;
-
 		body->setLinearVelocity(tangentVel);
-		body->setAngularDamping(0.5f); // Reduce spin
-		body->setLinearDamping(0.0f);  // Let it orbit freely
 
-		scene->addActor(*body);
+		body->setAngularDamping(0.5f);
+		body->setLinearDamping(0.0f);
+
+		std::cout << "Initial pos: " << x << ", " << z << "\n";
+		std::cout << "Velocity: " << tangentVel.x << ", " << tangentVel.z << "\n";
+
 		orbiters.push_back(std::move(box));
 	}
 }
 
 void App::UpdateOrbiterForces()
 {
-	for (auto& orbiter : orbiters)
+	if (applyForceContinuously)
 	{
-		PxRigidDynamic* body = orbiter->GetRigidBody();
-		PxVec3 pos = body->getGlobalPose().p;
-		PxVec3 toCenter = orbitCenter - pos;
-		float distSq = toCenter.magnitudeSquared();
-
-		if (distSq > 0.001f)
+		for (auto& box : orbiters)
 		{
-			// Apply force using an inverse-square falloff
-			PxVec3 force = toCenter.getNormalized() * (500.0f / distSq);
-			body->addForce(force, PxForceMode::eACCELERATION);
+			auto* body = box->GetRigidBody();
+			PxVec3 pos = body->getGlobalPose().p;
+			PxVec3 toCenter = orbitCenter - pos;
+			float dist = toCenter.magnitude();
+
+			if (dist > 0.01f)
+			{
+				PxVec3 force = toCenter.getNormalized() * (forceScale / dist);
+				body->addForce(force, PxForceMode::eACCELERATION);
+			}
 		}
 	}
+
 }
+void App::DrawOrbitDebug(Graphics& gfx)
+{
+	// 1. Draw center marker
+	DebugDraw::DrawSphere(gfx, orbitCenter, 0.2f, { 1.0f, 1.0f, 0.0f }); // Yellow sphere
+
+	// 2. Draw circular orbit ring
+	const int segments = 64;
+	std::vector<DirectX::XMFLOAT3> circlePoints;
+	for (int i = 0; i <= segments; ++i)
+	{
+		float angle = DirectX::XM_2PI * i / segments;
+		float x = orbitCenter.x + initialRadius * cosf(angle);
+		float z = orbitCenter.z + initialRadius * sinf(angle);
+		float y = orbitCenter.y;
+		circlePoints.push_back({ x, y, z });
+	}
+
+	for (int i = 1; i < circlePoints.size(); ++i)
+	{
+		DebugDraw::DrawLine(gfx, circlePoints[i - 1], circlePoints[i], { 0.0f, 1.0f, 1.0f }); // Cyan circle
+	}
+
+	// 3. Optionally: draw lines from orbiters to center
+	for (auto& box : orbiters)
+	{
+		DirectX::XMFLOAT3 p = box->GetPosition();
+		DebugDraw::DrawLine(gfx, p, orbitCenter, { 1.0f, 0.0f, 0.0f }); // Red vectors
+	}
+}
+
+
 

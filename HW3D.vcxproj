@@ -154,6 +154,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Cylinder.cpp" />
     <ClCompile Include="DeadException.cpp" />
+    <ClCompile Include="DebugDraw.cpp" />
     <ClCompile Include="Drawable.cpp" />
     <ClCompile Include="dxerr.cpp" />
     <ClCompile Include="DxgiInfoManager.cpp" />
@@ -206,6 +207,7 @@
     <ClInclude Include="DeadException.h" />
     <ClInclude Include="DeadMath.h" />
     <ClInclude Include="DeadWin.h" />
+    <ClInclude Include="DebugDraw.h" />
     <ClInclude Include="Drawable.h" />
     <ClInclude Include="DrawableBase.h" />
     <ClInclude Include="dxerr.h" />

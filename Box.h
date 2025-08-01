@@ -18,6 +18,12 @@ public:
 	bool SpawnControlWindow(int id, Graphics& gfx)noexcept;
 	// In Box.h
 	void SetPosition(float x, float y, float z);
+	DirectX::XMFLOAT3 GetPosition() const
+	{
+		PxTransform t = pPhysicsBody->getGlobalPose();
+		return { t.p.x, t.p.y, t.p.z };
+
+	}
 private:
 	void SyncMaterial( Graphics& gfx) noexcept(!IS_DEBUG);
 private:

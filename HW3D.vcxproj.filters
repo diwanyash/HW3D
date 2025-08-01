@@ -43,6 +43,9 @@
     <Filter Include="Header Files\Geometry">
       <UniqueIdentifier>{8348f900-c10b-462e-88e9-1036eec1f632}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\PhysX">
+      <UniqueIdentifier>{990854fc-0ed0-495b-80a8-52492a5a1591}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinMain.cpp">
@@ -169,6 +172,12 @@
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
     <ClCompile Include="AssImpTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysXWrapper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugDraw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -349,6 +358,12 @@
     </ClInclude>
     <ClInclude Include="Vertex.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysXWrapper.h">
+      <Filter>Header Files\PhysX</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugDraw.h">
+      <Filter>Header Files\PhysX</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
